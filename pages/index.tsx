@@ -14,18 +14,18 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <div className="flex justify-center items-center">
-          <h1 className="text-5xl font-bold">
+        <div className="flex justify-center items-center flex-wrap">
+          <h1 className="text-5xl font-bold text-center">
             Welcome to Minesweeper
           </h1>
           <MyModal />
         </div>
-        <div>
+        <div className="mt-4">
           <h2 className="text-3xl font-bold">Start a new game</h2>
-          <div>
-            <button className="bg-green-500 hover:bg-green-700 p-2 m-2 rounded">Easy</button>
-            <button className="bg-yellow-500 hover:bg-yellow-700 p-2 m-2 rounded">Medium</button>
-            <button className="bg-red-500 hover:bg-red-700 p-2 m-2 rounded">Hard</button>
+          <div className="mt-4 flex justify-center items-center">
+            <button className="w-full bg-green-500 hover:bg-green-700 p-2 m-2 rounded">Easy</button>
+            <button className="w-full bg-yellow-500 hover:bg-yellow-700 p-2 m-2 rounded">Medium</button>
+            <button className="w-full bg-red-500 hover:bg-red-700 p-2 m-2 rounded">Hard</button>
           </div>
         </div>
       </main>
