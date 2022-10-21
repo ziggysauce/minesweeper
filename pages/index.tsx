@@ -1,8 +1,8 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import MyModal from '../components/modal'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import styles from '../styles/Home.module.css';
+import MyModal from '../components/modal';
 
 const Home: NextPage = () => {
   return (
@@ -34,7 +34,7 @@ const Home: NextPage = () => {
         A footer will go here!
       </footer>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

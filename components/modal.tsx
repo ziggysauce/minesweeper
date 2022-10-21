@@ -1,5 +1,7 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useState } from 'react';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 export default function MyModal() {
   let [isOpen, setIsOpen] = useState(false)
@@ -14,14 +16,12 @@ export default function MyModal() {
 
   return (
     <>
-      <div className="inset-0 flex items-center justify-center">
-        <button
-          type="button"
-          onClick={openModal}
-          className="rounded-md border border-white bg-black bg-opacity-20 p-2 m-3 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          {/** TODO: Conditionally render an icon or text here depending on window size */}
-          More
+      <div className="flex items-center justify-center m-3">
+        <button type="button" onClick={openModal}>
+          <FontAwesomeIcon
+            icon={faCircleInfo}
+            style={{ fontSize: 25 }}
+          />
         </button>
       </div>
 
@@ -59,7 +59,7 @@ export default function MyModal() {
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Instructions on how to play go here...
+                      The rules are very simple. The board is divided into cells, with mines randomly distributed. To win, you need to open all the cells. The number on a cell shows the number of mines adjacent to it. Using this information, you can determine cells that are safe, and cells that contain mines. Cells suspected of being mines can be marked with a flag using the right mouse button.
                     </p>
                   </div>
 
@@ -79,5 +79,5 @@ export default function MyModal() {
         </Dialog>
       </Transition>
     </>
-  )
+  );
 }
