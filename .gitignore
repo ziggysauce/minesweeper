@@ -92,3 +92,6 @@ thumb
 sketch
 
 .env
+
+cypress/videos
+cypress/screenshots
