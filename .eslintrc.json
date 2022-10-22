@@ -4,20 +4,28 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["plugin:react/recommended", "plugin:@next/next/recommended", "airbnb", "prettier"],
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:@next/next/recommended",
+    "airbnb",
+    "prettier"
+  ],
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "tsx": true
     },
     "ecmaVersion": 12,
     "sourceType": "module"
   },
   "plugins": ["react", "prettier"],
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": ["error", { "singleQuote": true }],
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
     "react/forbid-prop-types": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     // defaultProps rule to be deprecated on function components
     // https://github.com/reactjs/rfcs/pull/107
     "react/require-default-props": [

@@ -23,18 +23,22 @@ const Home: NextPage = () => {
         <div className="mt-4">
           <h2 className="text-3xl font-bold">Start a new game</h2>
           <div className="mt-4 flex justify-center items-center">
-            <button className="w-full bg-green-500 hover:bg-green-700 p-2 m-2 rounded">Easy</button>
-            <button className="w-full bg-yellow-500 hover:bg-yellow-700 p-2 m-2 rounded">Medium</button>
-            <button className="w-full bg-red-500 hover:bg-red-700 p-2 m-2 rounded">Hard</button>
+            <button className="w-full bg-green-500 hover:bg-green-700 p-2 m-2 rounded">
+              Easy
+            </button>
+            <button className="w-full bg-yellow-500 hover:bg-yellow-700 p-2 m-2 rounded">
+              Medium
+            </button>
+            <button className="w-full bg-red-500 hover:bg-red-700 p-2 m-2 rounded">
+              Hard
+            </button>
           </div>
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        A footer will go here!
-      </footer>
+      <footer className={styles.footer}>A footer will go here!</footer>
     </div>
   );
-}
+};
 
 export default Home;

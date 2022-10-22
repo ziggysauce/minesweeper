@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
 export default function MyModal() {
-  let [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
     setIsOpen(false);
@@ -18,10 +18,7 @@ export default function MyModal() {
     <>
       <div className="flex items-center justify-center m-3">
         <button type="button" onClick={openModal}>
-          <FontAwesomeIcon
-            icon={faCircleInfo}
-            style={{ fontSize: 25 }}
-          />
+          <FontAwesomeIcon icon={faCircleInfo} style={{ fontSize: 25 }} />
         </button>
       </div>
 
@@ -59,7 +56,13 @@ export default function MyModal() {
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      The rules are very simple. The board is divided into cells, with mines randomly distributed. To win, you need to open all the cells. The number on a cell shows the number of mines adjacent to it. Using this information, you can determine cells that are safe, and cells that contain mines. Cells suspected of being mines can be marked with a flag using the right mouse button.
+                      The rules are very simple. The board is divided into
+                      cells, with mines randomly distributed. To win, you need
+                      to open all the cells. The number on a cell shows the
+                      number of mines adjacent to it. Using this information,
+                      you can determine cells that are safe, and cells that
+                      contain mines. Cells suspected of being mines can be
+                      marked with a flag using the right mouse button.
                     </p>
                   </div>
 
