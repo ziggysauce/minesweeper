@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import MyModal from '../components/modal';
 
@@ -24,13 +25,19 @@ const Home: NextPage = () => {
           <h2 className="text-3xl font-bold">Start a new game</h2>
           <div className="mt-4 flex justify-center items-center">
             <button className="w-full bg-green-500 hover:bg-green-700 p-2 m-2 rounded">
-              Easy
+              <Link href="/easy">
+                <a>Easy</a>
+              </Link>
             </button>
             <button className="w-full bg-yellow-500 hover:bg-yellow-700 p-2 m-2 rounded">
-              Medium
+              <Link href="/medium">
+                <a>Meidum</a>
+              </Link>
             </button>
             <button className="w-full bg-red-500 hover:bg-red-700 p-2 m-2 rounded">
-              Hard
+              <Link href="/hard">
+                <a>Hard</a>
+              </Link>
             </button>
           </div>
         </div>
