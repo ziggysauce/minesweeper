@@ -31,7 +31,7 @@ const Home: NextPage = () => {
             </button>
             <button className="w-full bg-yellow-500 hover:bg-yellow-700 p-2 m-2 rounded">
               <Link href="/medium">
-                <a>Meidum</a>
+                <a>Medium</a>
               </Link>
             </button>
             <button className="w-full bg-red-500 hover:bg-red-700 p-2 m-2 rounded">

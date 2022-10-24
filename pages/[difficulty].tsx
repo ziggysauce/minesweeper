@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import classNames from 'classnames'; // TODO: Remove if unused
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag } from '@fortawesome/free-solid-svg-icons';
@@ -7,8 +8,9 @@ import { faFaceSmile, faFlag } from '@fortawesome/free-solid-svg-icons';
 
 const GameBoard = (props) => {
   const router = useRouter();
-  const { difficulty } = router.query;
+  const { difficulty } = router.query; // FIXME: This doesn't work without navigation
   const [board, setBoard] = useState([]);
+  const [gameEnd, explode] = useState(false);
 
   const generateBoard = (difficulty) => {
     const board = [];
@@ -37,7 +39,7 @@ const GameBoard = (props) => {
     }
 
     // Build board structure
-    for(let row = 0; row < rows; row +=1 ) {
+    for(let row = 0; row < rows; row += 1) {
       const rowBlock = [];
       for(let col = 0; col < columns; col += 1) {
         const tile = {
@@ -64,14 +66,31 @@ const GameBoard = (props) => {
       }
     }
 
-    // TODO: Place adjacent bomb count
-    // Place empty tiles? Maybe? Maybe don't need to...
+    // Fill in numbers to display adjacent bombs
+    for(let row = 0; row < rows; row += 1) {
+      for(let col = 0; col < columns; col += 1) {
+        const tile = board[row][col];
+        if(!tile.isBomb) {
+          // Iterate through surrounding tiles to check for adjacent bomb count
+          let adjacentBombs = 0;
+          for(let rowCheck = -1; rowCheck < 2; rowCheck += 1) {
+            for(let colCheck = -1; colCheck < 2; colCheck += 1) {
+              const tileToCheck = board[row + rowCheck]?.[col + colCheck];
+              if(tileToCheck?.isBomb) {
+                adjacentBombs += 1;
+              }
+            }
+          }
+          tile.adjacentBombs = adjacentBombs;
+        }
+      }
+    }
 
     return board;
   }
 
-  const formattedBoard = generateBoard(difficulty);
   useEffect(() => {
+    const formattedBoard = generateBoard(difficulty);
     setBoard(formattedBoard);
   }, []);
 
@@ -81,13 +100,15 @@ const GameBoard = (props) => {
    * @param {Number} y - The y coordinate of the tile
    */
   const checkTile = (x, y) => {
-    const tile = board[x][y];
-    console.log('\n\nLE TILE: ', tile);
+    const { isBomb, isFlag, isShown } = board[x][y];
 
     // TODO:
-    // 1. Check if bomb
+    if(isBomb) {
+      explode(true);
+    }
     // 2. Check if number
     // 3. Check if empty
+    // 4. If isShown, do nothing
   };
 
   const boardHeader = (
@@ -106,11 +127,27 @@ const GameBoard = (props) => {
     <div>
       {board.map((row, rowIdx) => (
         <div key={`row-${rowIdx}`} className="flex">
-          {row.map((col, colIdx) => (
-            <button key={`row-${rowIdx}-col-${colIdx}`}
-              className="w-full bg-gray-300 border border-black p-2"
-              onClick={() => checkTile(rowIdx, colIdx)}>{col.isBomb ? '[B]' : '[N]'}</button>
-          ))}
+          {row.map((col, colIdx) => {
+            const { isBomb, isFlag, isShown, adjacentBombs } = col;
+            const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
+            const tileColor = numberColors[adjacentBombs];
+            let tileContent = '[X]';
+
+            if(isBomb) {
+              tileContent = '[B]';
+            } else if(adjacentBombs) {
+              tileContent = `[${adjacentBombs}]`;
+            }
+
+            // FIXME: text-{color}-{number} isn't working
+            return (
+              <button key={`row-${rowIdx}-col-${colIdx}`}
+                className={`w-full bg-gray-300 border border-black p-2 text-${tileColor}-400`}
+                onClick={() => checkTile(rowIdx, colIdx)}>
+                {tileContent}
+              </button>
+            )}
+          )}
         </div>
       ))}
     </div>
