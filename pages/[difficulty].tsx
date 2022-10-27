@@ -139,10 +139,9 @@ const GameBoard = (props) => {
               tileContent = `[${adjacentBombs}]`;
             }
 
-            // FIXME: text-{color}-{number} isn't working
             return (
               <button key={`row-${rowIdx}-col-${colIdx}`}
-                className={`w-full bg-gray-300 border border-black p-2 text-${tileColor}-400`}
+                className={`w-full bg-gray-300 border border-black p-2 text-${tileColor}-600`}
                 onClick={() => checkTile(rowIdx, colIdx)}>
                 {tileContent}
               </button>
@@ -153,9 +152,16 @@ const GameBoard = (props) => {
     </div>
   );
 
+
+  let headerColor = 'text-green-600';
+  if(difficulty === 'medium') {
+    headerColor = 'text-yellow-600';
+  } else if(difficulty === 'hard') {
+    headerColor = 'text-red-600';
+  }
   return (
     <main className={styles.main}>
-      <h1 className="mb-3">Diffiulty: {difficulty}</h1>
+      <h1 className={classNames({'mb-3': true}, {[headerColor]: true})}>Diffiulty: {difficulty}</h1>
       <div className="flex flex-col justify-center items-center border border-gray">
         {boardHeader}
         {boardBody}
