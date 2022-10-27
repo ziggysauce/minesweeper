@@ -26,17 +26,17 @@ const Home: NextPage = () => {
           <div className="mt-4 flex justify-center items-center">
             <button className="w-full bg-green-500 hover:bg-green-700 p-2 m-2 rounded">
               <Link href="/easy">
-                <a>Easy</a>
+                <span>Easy</span>
               </Link>
             </button>
             <button className="w-full bg-yellow-500 hover:bg-yellow-700 p-2 m-2 rounded">
               <Link href="/medium">
-                <a>Medium</a>
+                <span>Medium</span>
               </Link>
             </button>
             <button className="w-full bg-red-500 hover:bg-red-700 p-2 m-2 rounded">
               <Link href="/hard">
-                <a>Hard</a>
+                <span>Hard</span>
               </Link>
             </button>
           </div>
