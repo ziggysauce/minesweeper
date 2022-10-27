@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import classNames from 'classnames'; // TODO: Remove if unused
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faFlag } from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faFlag, faBomb } from '@fortawesome/free-solid-svg-icons';
 
 
 const GameBoard = (props) => {
@@ -130,11 +130,12 @@ const GameBoard = (props) => {
           {row.map((col, colIdx) => {
             const { isBomb, isFlag, isShown, adjacentBombs } = col;
             const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
-            const tileColor = numberColors[adjacentBombs];
+            let tileColor = numberColors[adjacentBombs];
             let tileContent = '[X]';
 
             if(isBomb) {
-              tileContent = '[B]';
+              tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
+              tileColor = 'red';
             } else if(adjacentBombs) {
               tileContent = `[${adjacentBombs}]`;
             }
