@@ -5,89 +5,89 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag, faBomb } from '@fortawesome/free-solid-svg-icons';
 
+const generateBoard = (difficulty) => {
+  const board = [];
+  let rows = 0;
+  let columns = 0;
+  let bombs = 0;
+
+  // Set board parameters based on difficulty
+  // TODO: If mobile, invert rows and columns for hard
+  switch (difficulty) {
+    case 'hard':
+      rows = 16;
+      columns = 30;
+      bombs = 99;
+      break;
+    case 'medium':
+      rows = 16;
+      columns = 16;
+      bombs = 40;
+      break;
+    case 'easy':
+    default:
+      rows = 9;
+      columns = 9;
+      bombs = 12;
+      break;
+  }
+
+  // Build board structure
+  for(let row = 0; row < rows; row += 1) {
+    const rowBlock = [];
+    for(let col = 0; col < columns; col += 1) {
+      const tile = {
+        row,
+        col,
+        isBomb: false,
+        isFlag: false,
+        isShown: false,
+        adjacentBombs: 0,
+      };
+      rowBlock.push(tile);
+    }
+    board.push(rowBlock);
+  }
+
+  // Place bombs
+  let bombsPlaced = 0;
+  while (bombsPlaced < bombs) {
+    const randomized = (type) => Math.floor(Math.random() * type);
+    const randomTile = board[randomized(rows)][randomized(columns)];
+    if(!randomTile.isBomb) {
+      randomTile.isBomb = true;
+      bombsPlaced += 1;
+    }
+  }
+
+  // Fill in numbers to display adjacent bombs
+  for(let row = 0; row < rows; row += 1) {
+    for(let col = 0; col < columns; col += 1) {
+      const tile = board[row][col];
+      if(!tile.isBomb) {
+        // Iterate through surrounding tiles to check for adjacent bomb count
+        let adjacentBombs = 0;
+        for(let rowCheck = -1; rowCheck < 2; rowCheck += 1) {
+          for(let colCheck = -1; colCheck < 2; colCheck += 1) {
+            const tileToCheck = board[row + rowCheck]?.[col + colCheck];
+            if(tileToCheck?.isBomb) {
+              adjacentBombs += 1;
+            }
+          }
+        }
+        tile.adjacentBombs = adjacentBombs;
+      }
+    }
+  }
+
+  return board;
+}
 
 const GameBoard = (props) => {
   const router = useRouter();
   const { difficulty } = router.query; // FIXME: This doesn't work without navigation
   const [board, setBoard] = useState([]);
   const [gameEnd, explode] = useState(false);
-
-  const generateBoard = (difficulty) => {
-    const board = [];
-    let rows = 0;
-    let columns = 0;
-    let bombs = 0;
-
-    // Set board parameters based on difficulty
-    switch (difficulty) {
-      case 'hard':
-        rows: 16;
-        columns: 30;
-        bombs: 99;
-        break;
-      case 'medium':
-        rows: 16;
-        columns: 16;
-        bombs: 40;
-        break;
-      case 'easy':
-      default:
-        rows = 9;
-        columns = 9;
-        bombs = 12;
-        break;
-    }
-
-    // Build board structure
-    for(let row = 0; row < rows; row += 1) {
-      const rowBlock = [];
-      for(let col = 0; col < columns; col += 1) {
-        const tile = {
-          row,
-          col,
-          isBomb: false,
-          isFlag: false,
-          isShown: false,
-          adjacentBombs: 0,
-        };
-        rowBlock.push(tile);
-      }
-      board.push(rowBlock);
-    }
-
-    // Place bombs
-    let bombsPlaced = 0;
-    while (bombsPlaced < bombs) {
-      const randomized = (type) => Math.floor(Math.random() * type);
-      const randomTile = board[randomized(rows)][randomized(columns)];
-      if(!randomTile.isBomb) {
-        randomTile.isBomb = true;
-        bombsPlaced += 1;
-      }
-    }
-
-    // Fill in numbers to display adjacent bombs
-    for(let row = 0; row < rows; row += 1) {
-      for(let col = 0; col < columns; col += 1) {
-        const tile = board[row][col];
-        if(!tile.isBomb) {
-          // Iterate through surrounding tiles to check for adjacent bomb count
-          let adjacentBombs = 0;
-          for(let rowCheck = -1; rowCheck < 2; rowCheck += 1) {
-            for(let colCheck = -1; colCheck < 2; colCheck += 1) {
-              const tileToCheck = board[row + rowCheck]?.[col + colCheck];
-              if(tileToCheck?.isBomb) {
-                adjacentBombs += 1;
-              }
-            }
-          }
-          tile.adjacentBombs = adjacentBombs;
-        }
-      }
-    }
-
-    return board;
-  }
 
   useEffect(() => {
     const formattedBoard = generateBoard(difficulty);
@@ -100,59 +100,18 @@ const GameBoard = (props) => {
    * @param {Number} y - The y coordinate of the tile
    */
   const checkTile = (x, y) => {
+    const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
 
-    // TODO:
     if(isBomb) {
-      explode(true);
+      explode(true); // TODO: End game
     }
+    boardCopy[x][y].isShown = true;
+    setBoard(boardCopy);
     // 2. Check if number
-    // 3. Check if empty
+    // 3. Check if empty => show all empty adjacent spaces
     // 4. If isShown, do nothing
   };
-
-  const boardHeader = (
-    <div className="flex justify-between items-center w-full">
-      <div className="border border-gray p-2">
-        <FontAwesomeIcon icon={faFlag} style={{ fontSize: 25 }} />
-      </div>
-      <div className="border border-gray p-2">
-        <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 25 }} />
-      </div>
-      <div className="border border-gray p-2">00:00</div>
-    </div>
-  );
-
-  const boardBody = (
-    <div>
-      {board.map((row, rowIdx) => (
-        <div key={`row-${rowIdx}`} className="flex">
-          {row.map((col, colIdx) => {
-            const { isBomb, isFlag, isShown, adjacentBombs } = col;
-            const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
-            let tileColor = numberColors[adjacentBombs];
-            let tileContent = '[X]';
-
-            if(isBomb) {
-              tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
-              tileColor = 'red';
-            } else if(adjacentBombs) {
-              tileContent = `[${adjacentBombs}]`;
-            }
-
-            return (
-              <button key={`row-${rowIdx}-col-${colIdx}`}
-                className={`w-full bg-gray-300 border border-black p-2 text-${tileColor}-600`}
-                onClick={() => checkTile(rowIdx, colIdx)}>
-                {tileContent}
-              </button>
-            )}
-          )}
-        </div>
-      ))}
-    </div>
-  );
-
 
   let headerColor = 'text-green-600';
   if(difficulty === 'medium') {
@@ -160,15 +119,57 @@ const GameBoard = (props) => {
   } else if(difficulty === 'hard') {
     headerColor = 'text-red-600';
   }
-  return (
-    <main className={styles.main}>
-      <h1 className={classNames({'mb-3': true}, {[headerColor]: true})}>Diffiulty: {difficulty}</h1>
-      <div className="flex flex-col justify-center items-center border border-gray">
-        {boardHeader}
-        {boardBody}
-      </div>
-    </main>
-  );
+  if(difficulty) {
+    return (
+      <main className={styles.main}>
+        <h2 className="text-slate-600">Something fun!</h2>
+        <h1 className={classNames({'mb-3': true}, {[headerColor]: true})}>Diffiulty: {difficulty}</h1>
+        <div className="flex flex-col justify-center items-center border border-gray">
+          <div className="flex justify-between items-center w-full">
+            <div className="border border-gray p-2">
+              <FontAwesomeIcon icon={faFlag} style={{ fontSize: 25 }} />
+            </div>
+            <div className="border border-gray p-2">
+              <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 25 }} />
+            </div>
+            <div className="border border-gray p-2">00:00</div>
+          </div>
+          <div>
+            {board.map((row, rowIdx) => (
+              <div key={`row-${rowIdx}`} className="flex">
+                {row.map((col, colIdx) => {
+                  const { isBomb, isFlag, isShown, adjacentBombs } = col;
+                  const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
+                  let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
+                  let tileContent = '';
+                  let bgColor = 'bg-gray-300';
+
+                  if(isShown) {
+                    if(isBomb) {
+                      tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
+                      tileColor = 'slate';
+                    } else if(adjacentBombs) {
+                      tileContent = `[${adjacentBombs}]`;
+                    } else {
+                      bgColor = 'bg-gray-500';
+                    }
+                  }
+
+                  return (
+                    <button key={`row-${rowIdx}-col-${colIdx}-${isShown}`}
+                      className={`w-8 h-8 border border-black text-${tileColor}-600 ${bgColor}`}
+                      onClick={() => checkTile(rowIdx, colIdx)}>
+                      {tileContent}
+                    </button>
+                  )}
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    );
+  }
 }
 
 export default GameBoard;
