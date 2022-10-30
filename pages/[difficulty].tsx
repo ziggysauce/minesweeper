@@ -6,7 +6,12 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-const generateBoard = (difficulty) => {
+interface GameBoard {
+  difficulty: string;
+  board: object[][];
+}
+
+const generateBoard = (difficulty: string) => {
   const board = [];
   let rows = 0;
   let columns = 0;
