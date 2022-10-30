@@ -86,7 +86,9 @@ const generateBoard = (difficulty: string) => {
 
 const GameBoard = () => {
   const router = useRouter();
-  const { difficulty } = router.query; // FIXME: This doesn't work without navigation
+  let { difficulty } = router.query; // FIXME: This doesn't work without navigation
+  difficulty = Array.isArray(difficulty) ? difficulty[0] : difficulty; // NOTE: In theory, we should never have the same param causing an array
+
   const [board, setBoard] = useState([]);
   const [gameEnd, explode] = useState(false);
 
