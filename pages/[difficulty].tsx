@@ -6,13 +6,7 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-interface GameBoard {
-  difficulty: string;
-  board: object[][];
-  structureType: number;
-}
-
-const generateBoard = (difficulty) => {
+const generateBoard = (difficulty: string) => {
   const board = [];
   let rows = 0;
   let columns = 0;
@@ -59,7 +53,7 @@ const generateBoard = (difficulty) => {
   // Place bombs
   let bombsPlaced = 0;
   while (bombsPlaced < bombs) {
-    const randomized = (structureType) => Math.floor(Math.random() * structureType);
+    const randomized = (structureCount: number) => Math.floor(Math.random() * structureCount);
     const randomTile = board[randomized(rows)][randomized(columns)];
     if(!randomTile.isBomb) {
       randomTile.isBomb = true;
