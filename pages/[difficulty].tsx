@@ -91,8 +91,10 @@ const GameBoard = () => {
   const [gameEnd, explode] = useState(false);
 
   useEffect(() => {
-    const formattedBoard = generateBoard(difficulty);
-    setBoard(formattedBoard);
+    if(difficulty) {
+      const formattedBoard = generateBoard(difficulty);
+      setBoard(formattedBoard);
+    }
   }, []);
 
   // Prevent default behavior with right click
