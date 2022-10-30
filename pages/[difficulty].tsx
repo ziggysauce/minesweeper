@@ -9,9 +9,10 @@ import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-soli
 interface GameBoard {
   difficulty: string;
   board: object[][];
+  structureType: number;
 }
 
-const generateBoard = (difficulty: string) => {
+const generateBoard = (difficulty) => {
   const board = [];
   let rows = 0;
   let columns = 0;
@@ -58,7 +59,7 @@ const generateBoard = (difficulty: string) => {
   // Place bombs
   let bombsPlaced = 0;
   while (bombsPlaced < bombs) {
-    const randomized = (type) => Math.floor(Math.random() * type);
+    const randomized = (structureType) => Math.floor(Math.random() * structureType);
     const randomTile = board[randomized(rows)][randomized(columns)];
     if(!randomTile.isBomb) {
       randomTile.isBomb = true;
@@ -89,7 +90,7 @@ const generateBoard = (difficulty: string) => {
   return board;
 }
 
-const GameBoard = (props) => {
+const GameBoard = () => {
   const router = useRouter();
   const { difficulty } = router.query; // FIXME: This doesn't work without navigation
   const [board, setBoard] = useState([]);
@@ -114,7 +115,6 @@ const GameBoard = (props) => {
    * @param {Number} y - The y coordinate of the tile
    */
   const checkTile = (x, y, { button }) => {
-    console.log('EVENT: ', button);
     const rightClick = button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
