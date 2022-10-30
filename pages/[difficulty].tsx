@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-const generateBoard = (difficulty: string) => {
+const generateBoard = (difficulty: string|string[]) => {
   const board = [];
   let rows = 0;
   let columns = 0;
@@ -93,7 +93,7 @@ const GameBoard = () => {
 
   useEffect(() => {
     if(difficulty) {
-      const formattedBoard = generateBoard(difficulty.toString());
+      const formattedBoard = generateBoard(difficulty);
       setBoard(formattedBoard);
     }
   }, []);
