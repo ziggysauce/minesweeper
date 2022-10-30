@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import classNames from 'classnames'; // TODO: Remove if unused
+import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faFlag, faBomb } from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const generateBoard = (difficulty) => {
   const board = [];
@@ -94,17 +95,34 @@ const GameBoard = (props) => {
     setBoard(formattedBoard);
   }, []);
 
+  // Prevent default behavior with right click
+  // TODO: Only prevent right click on board
+  if (typeof window !== 'undefined') {
+    window.addEventListener('contextmenu', (event) => {
+      event.preventDefault();
+    });
+  }
+
   /**
    * @description Checks the tile if it is a bomb or not
    * @param {Number} x - The x coordinate of the tile
    * @param {Number} y - The y coordinate of the tile
    */
-  const checkTile = (x, y) => {
+  const checkTile = (x, y, { button }) => {
+    console.log('EVENT: ', button);
+    const rightClick = button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
 
+    // If already visible, do nothing
+    if(isShown) {
+      return;
+    }
+
     if(isBomb) {
       explode(true); // TODO: End game
+    } else if(rightClick) {
+      boardCopy[x][y].isFlag = true;
     }
     boardCopy[x][y].isShown = true;
     setBoard(boardCopy);
@@ -122,7 +140,16 @@ const GameBoard = (props) => {
   if(difficulty) {
     return (
       <main className={styles.main}>
+        <Link href="/">
+          <button className="bg-zinc-700 hover:bg-zinc-800 p-2 m-2 rounded absolute top-0 left-0">
+            <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 15 }} className="mr-2" />
+            Back
+          </button>
+        </Link>
+        {/** FIXME: Get these colors to work below */}
         <h2 className="text-slate-600">Something fun!</h2>
+        <h2 className="text-blue-600">Something blue!</h2>
+        <h2 className="text-orange-600">Something orange!</h2>
         <h1 className={classNames({'mb-3': true}, {[headerColor]: true})}>Diffiulty: {difficulty}</h1>
         <div className="flex flex-col justify-center items-center border border-gray">
           <div className="flex justify-between items-center w-full">
@@ -143,22 +170,25 @@ const GameBoard = (props) => {
                   let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
                   let tileContent = '';
                   let bgColor = 'bg-gray-300';
+                  let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
 
                   if(isShown) {
                     if(isBomb) {
                       tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
                       tileColor = 'slate';
+                    } else if(isFlag) {
+                      tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
+                      tileColor = 'orange';
                     } else if(adjacentBombs) {
-                      tileContent = `[${adjacentBombs}]`;
-                    } else {
-                      bgColor = 'bg-gray-500';
+                      tileContent = adjacentBombs;
                     }
+                    borderStyles = 'border border-gray-500';
                   }
 
                   return (
                     <button key={`row-${rowIdx}-col-${colIdx}-${isShown}`}
-                      className={`w-8 h-8 border border-black text-${tileColor}-600 ${bgColor}`}
-                      onClick={() => checkTile(rowIdx, colIdx)}>
+                      className={`w-8 h-8 font-bold ${borderStyles} text-${tileColor}-600 ${bgColor}`}
+                      onMouseUp={(e) => checkTile(rowIdx, colIdx, e)}>
                       {tileContent}
                     </button>
                   )}
