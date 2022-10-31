@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-const generateBoard = (difficulty: string|string[]) => {
+const generateBoard = (difficulty: string | string[]) => {
   const board = [];
   let rows = 0;
   let columns = 0;
@@ -180,7 +180,7 @@ const GameBoard = () => {
                   const { isBomb, isFlag, isShown, adjacentBombs } = col as colObj;
                   const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
                   let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
-                  let tileContent: ReactElement | null = '';
+                  let tileContent: SVGRectElement | null = '';
                   let bgColor = 'bg-gray-300';
                   let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
 
