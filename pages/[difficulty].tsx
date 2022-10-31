@@ -192,7 +192,7 @@ const GameBoard = () => {
                       tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
                       tileColor = 'orange';
                     } else if(adjacentBombs) {
-                      tileContent = adjacentBombs;
+                      tileContent = <span>{adjacentBombs}</span>;
                     }
                     borderStyles = 'border border-gray-500';
                   }
