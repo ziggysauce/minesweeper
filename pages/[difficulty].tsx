@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect, ReactElement } from 'react';
+import { useState, useEffect, ReactElement, MouseEvent } from 'react';
 import classNames from 'classnames'; // TODO: Remove if unused
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
@@ -105,7 +105,7 @@ const GameBoard = () => {
   // Prevent default behavior with right click
   // TODO: Only prevent right click on board
   if (typeof window !== 'undefined') {
-    window.addEventListener('contextmenu', (event) => {
+    window.addEventListener('contextmenu', (event: MouseEvent) => {
       event.preventDefault();
     });
   }
@@ -115,7 +115,7 @@ const GameBoard = () => {
    * @param {Number} x - The x coordinate of the tile
    * @param {Number} y - The y coordinate of the tile
    */
-  const checkTile = (x: number, y: number, event: Event & { button: number }) => {
+  const checkTile = (x: number, y: number, event: MouseEvent & { button: number }) => {
     const rightClick = event.button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
