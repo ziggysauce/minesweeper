@@ -115,8 +115,8 @@ const GameBoard = () => {
    * @param {Number} x - The x coordinate of the tile
    * @param {Number} y - The y coordinate of the tile
    */
-  const checkTile = (x: number, y: number, event: Event) => {
-    const rightClick = event.button as number === 2;
+  const checkTile = (x: number, y: number, event: Event & { button: number }) => {
+    const rightClick = event.button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
 
