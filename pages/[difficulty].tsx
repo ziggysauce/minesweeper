@@ -200,7 +200,7 @@ const GameBoard = () => {
                   return (
                     <button key={`row-${rowIdx}-col-${colIdx}-${isShown}`}
                       className={`w-8 h-8 font-bold ${borderStyles} text-${tileColor}-600 ${bgColor}`}
-                      onMouseUp={(e?: MouseEvent<Element, MouseEvent> | undefined) => checkTile(rowIdx, colIdx, e)}>
+                      onMouseUp={(e) => checkTile(rowIdx, colIdx, e)}>
                       {tileContent}
                     </button>
                   )}
