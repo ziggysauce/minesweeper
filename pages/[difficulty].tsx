@@ -105,7 +105,7 @@ const GameBoard = () => {
   // Prevent default behavior with right click
   // TODO: Only prevent right click on board
   if (typeof window !== 'undefined') {
-    window.addEventListener('contextmenu', (event: MouseEvent<Element, MouseEvent>) => {
+    window.addEventListener('contextmenu', (event?: MouseEvent<Element, MouseEvent> | undefined) => {
       event.preventDefault();
     });
   }
@@ -115,7 +115,7 @@ const GameBoard = () => {
    * @param {Number} x - The x coordinate of the tile
    * @param {Number} y - The y coordinate of the tile
    */
-  const checkTile = (x: number, y: number, event: MouseEvent<Element, MouseEvent> & { button: number }) => {
+  const checkTile = (x: number, y: number, e?: MouseEvent<Element, MouseEvent> | undefined & { button: number }) => {
     const rightClick = event.button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
@@ -200,7 +200,7 @@ const GameBoard = () => {
                   return (
                     <button key={`row-${rowIdx}-col-${colIdx}-${isShown}`}
                       className={`w-8 h-8 font-bold ${borderStyles} text-${tileColor}-600 ${bgColor}`}
-                      onMouseUp={(e: MouseEvent) => checkTile(rowIdx, colIdx, e)}>
+                      onMouseUp={(e?: MouseEvent<Element, MouseEvent> | undefined) => checkTile(rowIdx, colIdx, e)}>
                       {tileContent}
                     </button>
                   )}
