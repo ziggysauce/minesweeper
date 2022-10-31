@@ -171,7 +171,13 @@ const GameBoard = () => {
             {board.map((row: object[], rowIdx: number) => (
               <div key={`row-${rowIdx}`} className="flex">
                 {row.map((col: object, colIdx: number) => {
-                  const { isBomb, isFlag, isShown, adjacentBombs } = col;
+                  type colObj = {
+                    isBomb: boolean,
+                    isFlag: boolean,
+                    isShown: boolean,
+                    adjacentBombs: number,
+                  };
+                  const { isBomb, isFlag, isShown, adjacentBombs } = col as colObj;
                   const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
                   let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
                   let tileContent = '';
