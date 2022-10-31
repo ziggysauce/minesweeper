@@ -92,11 +92,15 @@ const GameBoard = () => {
   const [gameEnd, explode] = useState(false);
 
   useEffect(() => {
+    if(!router.isReady) {
+      return;
+    }
+
     if(difficulty) {
       const formattedBoard = generateBoard(difficulty);
       setBoard(formattedBoard);
     }
-  }, []);
+  }, [router.isReady]);
 
   // Prevent default behavior with right click
   // TODO: Only prevent right click on board
@@ -112,7 +116,7 @@ const GameBoard = () => {
    * @param {Number} y - The y coordinate of the tile
    */
   const checkTile = (x: number, y: number, event: Event) => {
-    const rightClick = event.button === 2;
+    const rightClick = event.button as number === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
 
