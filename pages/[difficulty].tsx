@@ -180,7 +180,7 @@ const GameBoard = () => {
                   const { isBomb, isFlag, isShown, adjacentBombs } = col as colObj;
                   const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
                   let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
-                  let tileContent = '';
+                  let tileContent: ReactElement | null = '';
                   let bgColor = 'bg-gray-300';
                   let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
 
