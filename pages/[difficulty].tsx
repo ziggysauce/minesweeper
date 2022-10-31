@@ -105,7 +105,7 @@ const GameBoard = () => {
   // Prevent default behavior with right click
   // TODO: Only prevent right click on board
   if (typeof window !== 'undefined') {
-    window.addEventListener('contextmenu', (e?: MouseEvent<Element, MouseEvent> | undefined) => {
+    window.addEventListener('contextmenu', (e?: MouseEvent) => {
       e.preventDefault();
     });
   }
