@@ -88,7 +88,7 @@ const GameBoard = () => {
   const router = useRouter();
   const { difficulty } = router.query; // FIXME: This doesn't work without navigation
 
-  const [board, setBoard] = useState([] as Array[]);
+  const [board, setBoard] = useState([] as any);
   const [gameEnd, explode] = useState(false);
 
   useEffect(() => {
