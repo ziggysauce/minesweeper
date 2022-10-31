@@ -168,9 +168,9 @@ const GameBoard = () => {
             <div className="border border-gray p-2">00:00</div>
           </div>
           <div>
-            {board.map((row: number, rowIdx: number) => (
+            {board.map((row: Array, rowIdx: number) => (
               <div key={`row-${rowIdx}`} className="flex">
-                {row.map((col: number, colIdx: number) => {
+                {row.map((col: object, colIdx: number) => {
                   const { isBomb, isFlag, isShown, adjacentBombs } = col;
                   const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
                   let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
