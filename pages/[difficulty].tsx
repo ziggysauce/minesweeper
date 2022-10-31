@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect, ReactElement, MouseEvent } from 'react';
+import React, { useState, useEffect, ReactElement, MouseEvent } from 'react';
 import classNames from 'classnames'; // TODO: Remove if unused
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
@@ -115,7 +115,7 @@ const GameBoard = () => {
    * @param {Number} x - The x coordinate of the tile
    * @param {Number} y - The y coordinate of the tile
    */
-  const checkTile = (x: number, y: number, e?: MouseEvent<Element, MouseEvent> | undefined & { button: number }) => {
+  const checkTile = (x: number, y: number, e: React.MouseEvent<HTMLButtonElement> | undefined & { button: number }) => {
     const rightClick = e?.button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
