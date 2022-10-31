@@ -107,7 +107,7 @@ const GameBoard = () => {
   if (typeof window !== 'undefined') {
     window.addEventListener('contextmenu', (e?: MouseEvent<Element, MouseEvent> | undefined) => {
       e.preventDefault();
-    });
+    }, true);
   }
 
   /**
