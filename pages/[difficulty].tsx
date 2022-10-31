@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactElement } from 'react';
 import classNames from 'classnames'; // TODO: Remove if unused
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
