@@ -81,7 +81,7 @@ const generateBoard = (difficulty: string | string[]) => {
     }
   }
 
-  return board;
+  return { board, bombs };
 }
 
 const GameBoard = () => {
@@ -89,7 +89,12 @@ const GameBoard = () => {
   const { difficulty } = router.query; // FIXME: This doesn't work without navigation
 
   const [board, setBoard] = useState([] as any);
-  const [gameEnd, explode] = useState(false);
+  // const [gameHasBegun, startGame] = useState(false);
+  const [gameHasEnded, explode] = useState(false);
+  const [flags, setFlag] = useState(0);
+  const [timer, incrementTimer] = useState(0);
+  // const [interval, setInterval] = useState(null);
+  // FIXME: Timer
 
   useEffect(() => {
     if(!router.isReady) {
@@ -98,7 +103,8 @@ const GameBoard = () => {
 
     if(difficulty) {
       const formattedBoard = generateBoard(difficulty);
-      setBoard(formattedBoard);
+      setBoard(formattedBoard.board);
+      setFlag(formattedBoard.bombs);
     }
   }, [router.isReady]);
 
@@ -121,16 +127,20 @@ const GameBoard = () => {
     const { isBomb, isFlag, isShown } = board[x][y];
 
     // If already visible, do nothing
-    if(isShown) {
+    if(isShown && !isFlag) {
       return;
     }
 
     if(isBomb) {
       explode(true); // TODO: End game
+      boardCopy[x][y].isShown = true;
     } else if(rightClick) {
-      boardCopy[x][y].isFlag = true;
+      boardCopy[x][y].isFlag = !isFlag;
+      boardCopy[x][y].isShown = !isFlag;
+      setFlag(flags + (isFlag ? 1 : -1));
+    } else {
+      boardCopy[x][y].isShown = true;
     }
-    boardCopy[x][y].isShown = true;
     setBoard(boardCopy);
     // 2. Check if number
     // 3. Check if empty => show all empty adjacent spaces
@@ -160,12 +170,12 @@ const GameBoard = () => {
         <div className="flex flex-col justify-center items-center border border-gray">
           <div className="flex justify-between items-center w-full">
             <div className="border border-gray p-2">
-              <FontAwesomeIcon icon={faFlag} style={{ fontSize: 25 }} />
+              {flags}
             </div>
             <div className="border border-gray p-2">
-              <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 25 }} />
+              <FontAwesomeIcon icon={ faFaceSmile } style={{ fontSize: 25 }} />
             </div>
-            <div className="border border-gray p-2">00:00</div>
+            <div className="border border-gray p-2">{timer}</div>
           </div>
           <div>
             {board.map((row: object[], rowIdx: number) => (
