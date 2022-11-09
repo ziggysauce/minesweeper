@@ -93,7 +93,7 @@ const GameBoard = () => {
   const [gameHasEnded, explode] = useState(false);
   const [flags, setFlag] = useState(0);
   const [timer, setBoardTime] = useState(0);
-  const [interval, setTimerInterval] = useState(null);
+  const [interval, setTimerInterval] = useState(null as any);
 
   useEffect(() => {
     if(!router.isReady) {
@@ -126,7 +126,7 @@ const GameBoard = () => {
     setFlag(formattedBoard.bombs);
     setTimerInterval(null);
     setBoardTime(0);
-    if(interval: string | number | null ) {
+    if(interval) {
       clearInterval(interval);
     }
   }
