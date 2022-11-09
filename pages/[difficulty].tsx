@@ -165,7 +165,7 @@ const GameBoard = () => {
 
   // FIXME: Timer logic
   if(!interval) {
-      const intervalId: string | number | Timeout | undefined = setInterval(() => {
+      const intervalId: string | number | null = setInterval(() => {
         setBoardTime(timer + 1);
       }, 1000);
       setTimerInterval(intervalId);
