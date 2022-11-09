@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-const generateBoard = (difficulty: string | string[]) => {
+const generateBoard = (difficulty: string | string[] | undefined) => {
   const board = [];
   let rows = 0;
   let columns = 0;
@@ -149,10 +149,8 @@ const GameBoard = () => {
     if(isBomb) {
       explode(true);
       boardCopy[x][y].isShown = true;
-      console.log('BOOM!', {interval, timer});
       setTimerInterval(null);
       clearInterval(interval);
-      console.log('BOOM 2!', {interval, timer});
     } else if(rightClick) {
       boardCopy[x][y].isFlag = !isFlag;
       boardCopy[x][y].isShown = !isFlag;
