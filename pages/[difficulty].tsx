@@ -127,7 +127,7 @@ const GameBoard = () => {
     setTimerInterval(null);
     setBoardTime(0);
     if(interval) {
-      clearInterval(interval);
+      clearInterval(interval: string | number | Timeout | undefined);
     }
   }
 
