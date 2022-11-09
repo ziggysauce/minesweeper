@@ -86,15 +86,14 @@ const generateBoard = (difficulty: string | string[]) => {
 
 const GameBoard = () => {
   const router = useRouter();
-  const { difficulty } = router.query; // FIXME: This doesn't work without navigation
+  const { difficulty } = router.query;
 
   const [board, setBoard] = useState([] as any);
   // const [gameHasBegun, startGame] = useState(false);
   const [gameHasEnded, explode] = useState(false);
   const [flags, setFlag] = useState(0);
-  const [timer, incrementTimer] = useState(0);
-  // const [interval, setInterval] = useState(null);
-  // FIXME: Timer
+  const [timer, setBoardTime] = useState(0);
+  const [interval, setTimerInterval] = useState(null);
 
   useEffect(() => {
     if(!router.isReady) {
@@ -117,6 +116,22 @@ const GameBoard = () => {
   }
 
   /**
+   * @description Restarts the game:
+   * - Resets the board with new tiles
+   * - Resets the timer
+   */
+  function restartBoard() {
+    const formattedBoard = generateBoard(difficulty);
+    setBoard(formattedBoard.board);
+    setFlag(formattedBoard.bombs);
+    setTimerInterval(null);
+    setBoardTime(0);
+    if(interval) {
+      clearInterval(interval);
+    }
+  }
+
+  /**
    * @description Checks the tile if it is a bomb or not
    * @param {Number} x - The x coordinate of the tile
    * @param {Number} y - The y coordinate of the tile
@@ -132,8 +147,12 @@ const GameBoard = () => {
     }
 
     if(isBomb) {
-      explode(true); // TODO: End game
+      explode(true);
       boardCopy[x][y].isShown = true;
+      console.log('BOOM!', {interval, timer});
+      setTimerInterval(null);
+      clearInterval(interval);
+      console.log('BOOM 2!', {interval, timer});
     } else if(rightClick) {
       boardCopy[x][y].isFlag = !isFlag;
       boardCopy[x][y].isShown = !isFlag;
@@ -145,6 +164,14 @@ const GameBoard = () => {
     // 2. Check if number
     // 3. Check if empty => show all empty adjacent spaces
     // 4. If isShown, do nothing
+
+  // FIXME: Timer logic
+  if(!interval) {
+      const intervalId = setInterval(() => {
+        setBoardTime(timer + 1);
+      }, 1000);
+      setTimerInterval(intervalId);
+    }
   };
 
   let headerColor = 'text-green-600';
@@ -172,9 +199,9 @@ const GameBoard = () => {
             <div className="border border-gray p-2">
               {flags}
             </div>
-            <div className="border border-gray p-2">
+            <button onClick={() => restartBoard()} className="border border-gray p-2">
               <FontAwesomeIcon icon={ faFaceSmile } style={{ fontSize: 25 }} />
-            </div>
+            </button>
             <div className="border border-gray p-2">{timer}</div>
           </div>
           <div>
