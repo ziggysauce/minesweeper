@@ -126,7 +126,7 @@ const GameBoard = () => {
     setFlag(formattedBoard.bombs);
     setTimerInterval(null);
     setBoardTime(0);
-    if(interval) {
+    if(interval: string | number | null ) {
       clearInterval(interval);
     }
   }
