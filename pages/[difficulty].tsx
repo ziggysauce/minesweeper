@@ -151,7 +151,7 @@ const GameBoard = () => {
     }
 
     // If already visible, do nothing
-    if(isShown && !isFlag) {
+    if(isShown || (isFlag && !isShown && !rightClick)) {
       return;
     }
 
