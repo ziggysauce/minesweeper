@@ -138,7 +138,7 @@ const GameBoard = () => {
   const checkTile = (x: number, y: number, e: React.MouseEvent<HTMLButtonElement> | undefined & { button: number }) => {
     const rightClick = e?.button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
-    const { isBomb, isFlag, isShown } = board[x][y];
+    const { isBomb, isFlag, isShown, adjacentBombs } = board[x][y];
 
     // Start timer on first click
     if(!interval) {
@@ -155,15 +155,59 @@ const GameBoard = () => {
       return;
     }
 
-    if(isBomb) {
+    if(rightClick) {
+      boardCopy[x][y].isFlag = !isFlag;
+      setFlag(flags + (isFlag ? 1 : -1));
+    } else if(isBomb) {
       explode(true);
       boardCopy[x][y].isShown = true;
       setTimerInterval(null);
       clearInterval(interval);
-    } else if(rightClick) {
-      boardCopy[x][y].isFlag = !isFlag;
-      boardCopy[x][y].isShown = !isFlag;
-      setFlag(flags + (isFlag ? 1 : -1));
+    } else if(adjacentBombs === 0) {
+      boardCopy[x][y].isShown = true;
+
+      // Store tiles that are now shown
+      const revealedTiles = [board[x][y]];
+
+      // Check any adjacent tiles
+      const checkSurroundingTiles = (xTile: number, yTile: number) => {
+        for(let rowCheck = xTile - 1; rowCheck <= xTile + 1; rowCheck += 1) {
+          if(boardCopy[rowCheck]) {
+            for(let colCheck = yTile - 1; colCheck <= yTile + 1; colCheck += 1) {
+              if(boardCopy[rowCheck][colCheck]) {
+                const tileToCheck = boardCopy[rowCheck]?.[colCheck];
+
+                // Only check if not already shown
+                if(tileToCheck && !tileToCheck.isShown) {
+                  if(tileToCheck.adjacentBombs >= 0) {
+                    // If empty or has adjacent bombs, show it
+                    boardCopy[rowCheck][colCheck].isShown = true;
+
+                    // If previously marked as flag, remove flag
+                    if(tileToCheck.isFlag) {
+                      boardCopy[rowCheck][colCheck].isFlag = false;
+                      setFlag(flags - 1);
+                    }
+                  }
+
+                  // If tile has no adjacent bombs, add it to queue to check
+                  if(tileToCheck.adjacentBombs === 0) {
+                    revealedTiles.push(tileToCheck);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Recursively loop through revealed tiles to check for adjacent tiles
+      while(revealedTiles.length) {
+        revealedTiles.forEach((tile, idx) => {
+          checkSurroundingTiles(tile.row, tile.col);
+          revealedTiles.splice(idx, 1);
+        });
+      }
     } else {
       boardCopy[x][y].isShown = true;
     }
@@ -217,13 +261,13 @@ const GameBoard = () => {
                   let bgColor = 'bg-gray-300';
                   let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
 
-                  if(isShown) {
+                  if(isFlag) {
+                    tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
+                    tileColor = 'orange';
+                  } else if(isShown) {
                     if(isBomb) {
                       tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
                       tileColor = 'slate';
-                    } else if(isFlag) {
-                      tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
-                      tileColor = 'orange';
                     } else if(adjacentBombs) {
                       tileContent = <span>{adjacentBombs}</span>;
                     }
