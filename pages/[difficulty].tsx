@@ -89,7 +89,6 @@ const GameBoard = () => {
   const { difficulty } = router.query;
 
   const [board, setBoard] = useState([] as any);
-  // const [gameHasBegun, startGame] = useState(false);
   const [gameHasEnded, explode] = useState(false);
   const [flags, setFlag] = useState(0);
   const [timer, setBoardTime] = useState(0);
@@ -108,7 +107,7 @@ const GameBoard = () => {
   }, [router.isReady]);
 
   // Prevent default behavior with right click
-  // TODO: Only prevent right click on board
+  // TODO: Only prevent right click on board specifically
   if(typeof window !== 'undefined') {
     window.addEventListener('contextmenu', (e) => {
       e.preventDefault();
@@ -141,6 +140,16 @@ const GameBoard = () => {
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
 
+    // Start timer on first click
+    if(!interval) {
+      const intervalId: number | string| null | any = setInterval(() => {
+        setBoardTime((oldTime: number) => {
+          return oldTime + 1;
+        });
+      }, 1000);
+      setTimerInterval(intervalId);
+    }
+
     // If already visible, do nothing
     if(isShown && !isFlag) {
       return;
@@ -159,18 +168,6 @@ const GameBoard = () => {
       boardCopy[x][y].isShown = true;
     }
     setBoard(boardCopy);
-    // 2. Check if number
-    // 3. Check if empty => show all empty adjacent spaces
-    // 4. If isShown, do nothing
-
-    if(!interval) {
-      const intervalId: number | string| null | any = setInterval(() => {
-        setBoardTime((oldTime: number) => {
-          return oldTime + 1;
-        });
-      }, 1000);
-      setTimerInterval(intervalId);
-    }
   }
 
   let headerColor = 'text-green-600';
