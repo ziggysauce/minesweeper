@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-const generateBoard = (difficulty: string | string[]) => {
+const generateBoard = (difficulty: string | string[] | undefined) => {
   const board = [];
   let rows = 0;
   let columns = 0;
@@ -81,15 +81,18 @@ const generateBoard = (difficulty: string | string[]) => {
     }
   }
 
-  return board;
+  return { board, bombs };
 }
 
 const GameBoard = () => {
   const router = useRouter();
-  const { difficulty } = router.query; // FIXME: This doesn't work without navigation
+  const { difficulty } = router.query;
 
   const [board, setBoard] = useState([] as any);
-  const [gameEnd, explode] = useState(false);
+  const [gameHasEnded, explode] = useState(false);
+  const [flags, setFlag] = useState(0);
+  const [timer, setBoardTime] = useState(0);
+  const [interval, setTimerInterval] = useState(null as any);
 
   useEffect(() => {
     if(!router.isReady) {
@@ -98,16 +101,33 @@ const GameBoard = () => {
 
     if(difficulty) {
       const formattedBoard = generateBoard(difficulty);
-      setBoard(formattedBoard);
+      setBoard(formattedBoard.board);
+      setFlag(formattedBoard.bombs);
     }
   }, [router.isReady]);
 
   // Prevent default behavior with right click
-  // TODO: Only prevent right click on board
-  if (typeof window !== 'undefined') {
+  // TODO: Only prevent right click on board specifically
+  if(typeof window !== 'undefined') {
     window.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
+  }
+
+  /**
+   * @description Restarts the game:
+   * - Resets the board with new tiles
+   * - Resets the timer
+   */
+  function restartBoard() {
+    const formattedBoard = generateBoard(difficulty);
+    setBoard(formattedBoard.board);
+    setFlag(formattedBoard.bombs);
+    setTimerInterval(null);
+    setBoardTime(0);
+    if(interval) {
+      clearInterval(interval);
+    }
   }
 
   /**
@@ -120,22 +140,35 @@ const GameBoard = () => {
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown } = board[x][y];
 
+    // Start timer on first click
+    if(!interval) {
+      const intervalId: number | string| null | any = setInterval(() => {
+        setBoardTime((oldTime: number) => {
+          return oldTime + 1;
+        });
+      }, 1000);
+      setTimerInterval(intervalId);
+    }
+
     // If already visible, do nothing
-    if(isShown) {
+    if(isShown && !isFlag) {
       return;
     }
 
     if(isBomb) {
-      explode(true); // TODO: End game
+      explode(true);
+      boardCopy[x][y].isShown = true;
+      setTimerInterval(null);
+      clearInterval(interval);
     } else if(rightClick) {
-      boardCopy[x][y].isFlag = true;
+      boardCopy[x][y].isFlag = !isFlag;
+      boardCopy[x][y].isShown = !isFlag;
+      setFlag(flags + (isFlag ? 1 : -1));
+    } else {
+      boardCopy[x][y].isShown = true;
     }
-    boardCopy[x][y].isShown = true;
     setBoard(boardCopy);
-    // 2. Check if number
-    // 3. Check if empty => show all empty adjacent spaces
-    // 4. If isShown, do nothing
-  };
+  }
 
   let headerColor = 'text-green-600';
   if(difficulty === 'medium') {
@@ -160,12 +193,12 @@ const GameBoard = () => {
         <div className="flex flex-col justify-center items-center border border-gray">
           <div className="flex justify-between items-center w-full">
             <div className="border border-gray p-2">
-              <FontAwesomeIcon icon={faFlag} style={{ fontSize: 25 }} />
+              {flags}
             </div>
-            <div className="border border-gray p-2">
-              <FontAwesomeIcon icon={faFaceSmile} style={{ fontSize: 25 }} />
-            </div>
-            <div className="border border-gray p-2">00:00</div>
+            <button onClick={() => restartBoard()} className="border border-gray p-2">
+              <FontAwesomeIcon icon={ faFaceSmile } style={{ fontSize: 25 }} />
+            </button>
+            <div className="border border-gray p-2">{timer}</div>
           </div>
           <div>
             {board.map((row: object[], rowIdx: number) => (
