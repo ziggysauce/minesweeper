@@ -109,7 +109,7 @@ const GameBoard = () => {
 
   // Prevent default behavior with right click
   // TODO: Only prevent right click on board
-  if (typeof window !== 'undefined') {
+  if(typeof window !== 'undefined') {
     window.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
@@ -163,14 +163,15 @@ const GameBoard = () => {
     // 3. Check if empty => show all empty adjacent spaces
     // 4. If isShown, do nothing
 
-  // FIXME: Timer logic
-  if(!interval) {
+    if(!interval) {
       const intervalId: number | string| null | any = setInterval(() => {
-        setBoardTime(timer + 1);
+        setBoardTime((oldTime: number) => {
+          return oldTime + 1;
+        });
       }, 1000);
       setTimerInterval(intervalId);
     }
-  };
+  }
 
   let headerColor = 'text-green-600';
   if(difficulty === 'medium') {
