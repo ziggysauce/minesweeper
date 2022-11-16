@@ -43,6 +43,7 @@ const generateBoard = (difficulty: string | string[] | undefined) => {
         isBomb: false,
         isFlag: false,
         isShown: false,
+        isGameEnd: false,
         adjacentBombs: 0,
       };
       rowBlock.push(tile);
