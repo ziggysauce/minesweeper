@@ -4,7 +4,7 @@ import classNames from 'classnames'; // TODO: Remove if unused
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faFaceFrown, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const generateBoard = (difficulty: string | string[] | undefined) => {
   const board = [];
@@ -125,6 +125,7 @@ const GameBoard = () => {
     setFlag(formattedBoard.bombs);
     setTimerInterval(null);
     setBoardTime(0);
+    explode(false);
     if(interval) {
       clearInterval(interval);
     }
@@ -136,6 +137,10 @@ const GameBoard = () => {
    * @param {Number} y - The y coordinate of the tile
    */
   const checkTile = (x: number, y: number, e: React.MouseEvent<HTMLButtonElement> | undefined & { button: number }) => {
+    if(gameHasEnded) {
+      return;
+    }
+
     const rightClick = e?.button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown, adjacentBombs } = board[x][y];
@@ -161,6 +166,19 @@ const GameBoard = () => {
     } else if(isBomb) {
       explode(true);
       boardCopy[x][y].isShown = true;
+      boardCopy[x][y].isGameEnd = true;
+
+      // Reveal all other bombs
+      for(let row = 0; row < boardCopy.length; row += 1) {
+        for(let col = 0; col < boardCopy[row].length; col += 1) {
+          const tile = boardCopy[row][col];
+          if(tile.isBomb) {
+            boardCopy[row][col].isShown = true;
+          }
+        }
+      }
+
+      // Stop timer and clear interval
       setTimerInterval(null);
       clearInterval(interval);
     } else if(adjacentBombs === 0) {
@@ -225,7 +243,7 @@ const GameBoard = () => {
       <main className={styles.main}>
         <Link href="/">
           <button className="bg-zinc-700 hover:bg-zinc-800 p-2 m-2 rounded absolute top-0 left-0">
-            <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 15 }} className="mr-2" />
+            <FontAwesomeIcon icon={ faArrowLeft } style={{ fontSize: 15 }} className="mr-2" />
             Back
           </button>
         </Link>
@@ -239,8 +257,8 @@ const GameBoard = () => {
             <div className="border border-gray p-2">
               {flags}
             </div>
-            <button onClick={() => restartBoard()} className="border border-gray p-2">
-              <FontAwesomeIcon icon={ faFaceSmile } style={{ fontSize: 25 }} />
+            <button onClick={() => restartBoard()} className="border border-gray p-2 text-yellow-300">
+              <FontAwesomeIcon icon={ gameHasEnded ? faFaceFrown : faFaceSmile } style={{ fontSize: 25 }} />
             </button>
             <div className="border border-gray p-2">{timer}</div>
           </div>
@@ -254,24 +272,34 @@ const GameBoard = () => {
                     isShown: boolean,
                     adjacentBombs: number,
                   };
-                  const { isBomb, isFlag, isShown, adjacentBombs } = col as colObj;
+                  const { isBomb, isFlag, isShown, isGameEnd, adjacentBombs } = col as colObj;
                   const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
                   let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
                   let tileContent: ReactElement | null = <span></span>;
                   let bgColor = 'bg-gray-300';
                   let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
 
-                  if(isFlag) {
-                    tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
-                    tileColor = 'orange';
-                  } else if(isShown) {
+                  if(isShown) {
                     if(isBomb) {
-                      tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
-                      tileColor = 'slate';
+                      if(isFlag) {
+                        tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
+                        tileColor = 'slate';
+                        bgColor = 'bg-red-300';
+                      } else {
+                        tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
+                        tileColor = 'slate';
+                      }
+                      if(isGameEnd) {
+                        bgColor = 'bg-red-600';
+                        tileColor = 'white';
+                      }
                     } else if(adjacentBombs) {
                       tileContent = <span>{adjacentBombs}</span>;
                     }
                     borderStyles = 'border border-gray-500';
+                  } else if(isFlag) {
+                    tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
+                    tileColor = 'orange';
                   }
 
                   return (
