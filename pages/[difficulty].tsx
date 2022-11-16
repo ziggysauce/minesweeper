@@ -271,6 +271,7 @@ const GameBoard = () => {
                     isBomb: boolean,
                     isFlag: boolean,
                     isShown: boolean,
+                    isGameEnd: boolean,
                     adjacentBombs: number,
                   };
                   const { isBomb, isFlag, isShown, isGameEnd, adjacentBombs } = col as colObj;
