@@ -282,26 +282,43 @@ const GameBoard = () => {
                   let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
 
                   if(isShown) {
+                    borderStyles = 'border border-gray-500';
                     if(isBomb) {
+                      // Determine bomb or flag icon
+                      tileContent = isFlag
+                        ? <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />
+                        : <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
                       if(isFlag) {
-                        tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
-                        tileColor = 'slate';
-                        bgColor = 'bg-red-300';
+                        // If bomb and is flag, this is a correctly flagged bomb; do nothing
+                        tileColor = 'orange';
+                        borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
                       } else {
-                        tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
+                        // If bomb and no flag, show the bomb
                         tileColor = 'slate';
                       }
                       if(isGameEnd) {
+                        // Show the site of explosion
                         bgColor = 'bg-red-600';
                         tileColor = 'white';
                       }
                     } else if(adjacentBombs) {
+                      // Show the number of adjacent bonmbs
                       tileContent = <span>{adjacentBombs}</span>;
+                    } else if(isFlag && gameHasEnded) {
+                      // Show incorrectly flagged bomb
+                      tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
+                      tileColor = 'slate';
+                      bgColor = 'bg-red-300';
+                      borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
                     }
-                    borderStyles = 'border border-gray-500';
                   } else if(isFlag) {
                     tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
                     tileColor = 'orange';
+                    if(!isBomb && gameHasEnded) {
+                      // Show incorrectly flagged bomb
+                      tileColor = 'slate';
+                      bgColor = 'bg-red-300';
+                    }
                   }
 
                   return (
