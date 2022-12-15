@@ -101,9 +101,10 @@ const GameBoard = () => {
     }
 
     if(difficulty) {
-      const formattedBoard = generateBoard(difficulty);
-      setBoard(formattedBoard.board);
-      setFlag(formattedBoard.bombs);
+      restartBoard();
+      // const formattedBoard = generateBoard(difficulty);
+      // setBoard(formattedBoard.board);
+      // setFlag(formattedBoard.bombs);
     }
   }, [router.isReady]);
 
@@ -130,6 +131,21 @@ const GameBoard = () => {
     if(interval) {
       clearInterval(interval);
     }
+  }
+
+  function checkGameEnd() {
+    console.log('THE BOARD: ', board, flags);
+    let playerHasWon = false;
+
+    // Check if correct numbers of flags are marked
+    if(flags === 0) {
+      let playerHasWon = true;
+    }
+
+    // Check if all tiles are revealed or flagged
+    const gameIsComplete = board.every((row) => row.every(col => col.isShown || col.isFlag));
+    // TODO: Check to make sure ^^ this logic is working
+    console.log('IS GAME COMPLETE: ', gameIsComplete, flags);
   }
 
   /**
@@ -231,6 +247,8 @@ const GameBoard = () => {
       boardCopy[x][y].isShown = true;
     }
     setBoard(boardCopy);
+    checkGameEnd();
+    // TODO: Properly handle auto-flagging when game is over
   }
 
   let headerColor = 'text-green-600';
