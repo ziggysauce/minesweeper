@@ -4,7 +4,7 @@ import classNames from 'classnames'; // TODO: Remove if unused
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faFaceFrown, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faFaceFrown, faFaceLaughBeam, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 const generateBoard = (difficulty: string | string[] | undefined) => {
   const board = [];
@@ -85,28 +85,31 @@ const generateBoard = (difficulty: string | string[] | undefined) => {
   return { board, bombs };
 }
 
-const GameBoard = () => {
+function GameBoard() {
   const router = useRouter();
   const { difficulty } = router.query;
 
   const [board, setBoard] = useState([] as any);
   const [gameHasEnded, explode] = useState(false);
+  const [gameHasWon, setGameStatus] = useState(false);
   const [flags, setFlag] = useState(0);
   const [timer, setBoardTime] = useState(0);
   const [interval, setTimerInterval] = useState(null as any);
+  const [clicks, setClick] = useState(0); // This is a hack to get useEffect to run only on proper tile clicks
 
   useEffect(() => {
     if(!router.isReady) {
       return;
     }
 
-    if(difficulty) {
+    if(difficulty && clicks === 0) {
       restartBoard();
-      // const formattedBoard = generateBoard(difficulty);
-      // setBoard(formattedBoard.board);
-      // setFlag(formattedBoard.bombs);
     }
-  }, [router.isReady]);
+
+    if(interval) {
+      checkGameEnd();
+    }
+  }, [clicks, router.isReady]);
 
   // Prevent default behavior with right click
   // TODO: Only prevent right click on board specifically
@@ -126,8 +129,11 @@ const GameBoard = () => {
     setBoard(formattedBoard.board);
     setFlag(formattedBoard.bombs);
     setTimerInterval(null);
+    clearInterval(interval);
     setBoardTime(0);
+    setClick(0);
     explode(false);
+    setGameStatus(false);
     if(interval) {
       clearInterval(interval);
     }
@@ -137,6 +143,7 @@ const GameBoard = () => {
     console.log('THE BOARD: ', board, flags);
     let playerHasWon = false;
 
+
     // Check if correct numbers of flags are marked
     if(flags === 0) {
       let playerHasWon = true;
@@ -144,8 +151,14 @@ const GameBoard = () => {
 
     // Check if all tiles are revealed or flagged
     const gameIsComplete = board.every((row) => row.every(col => col.isShown || col.isFlag));
-    // TODO: Check to make sure ^^ this logic is working
     console.log('IS GAME COMPLETE: ', gameIsComplete, flags);
+    if(gameIsComplete) {
+      // FIXME: Should still correctly end game if all tiles EXCEPT bombs and flags are clicked -- new ticket
+      // TODO: Properly handle auto-flagging when applicable
+      setGameStatus(true);
+      setTimerInterval(null);
+      clearInterval(interval);
+    }
   }
 
   /**
@@ -181,7 +194,7 @@ const GameBoard = () => {
       boardCopy[x][y].isFlag = !isFlag;
       setFlag(flags + (isFlag ? 1 : -1));
     } else if(isBomb) {
-      explode(true);
+      // explode(true); // TODO: Uncomment this out when done testing
       boardCopy[x][y].isShown = true;
       boardCopy[x][y].isGameEnd = true;
 
@@ -247,8 +260,7 @@ const GameBoard = () => {
       boardCopy[x][y].isShown = true;
     }
     setBoard(boardCopy);
-    checkGameEnd();
-    // TODO: Properly handle auto-flagging when game is over
+    setClick(clicks + 1);
   }
 
   let headerColor = 'text-green-600';
@@ -277,7 +289,7 @@ const GameBoard = () => {
               {flags}
             </div>
             <button onClick={() => restartBoard()} className="border border-gray p-2 text-yellow-300">
-              <FontAwesomeIcon icon={ gameHasEnded ? faFaceFrown : faFaceSmile } style={{ fontSize: 25 }} />
+              <FontAwesomeIcon icon={ gameHasEnded ? faFaceFrown : (gameHasWon ? faFaceLaughBeam : faFaceSmile) } style={{ fontSize: 25 }} />
             </button>
             <div className="border border-gray p-2">{timer}</div>
           </div>
