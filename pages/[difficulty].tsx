@@ -6,6 +6,11 @@ import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceSmile, faFaceFrown, faFaceLaughBeam, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * @description Generates the board based on difficulty selected
+ * @param {string} difficulty - The difficulty selected
+ * @returns {object} - The board and the number of bombs
+ */
 const generateBoard = (difficulty: string | string[] | undefined) => {
   const board = [];
   let rows = 0;
@@ -128,8 +133,8 @@ function GameBoard() {
     const formattedBoard = generateBoard(difficulty);
     setBoard(formattedBoard.board);
     setFlag(formattedBoard.bombs);
-    setTimerInterval(null);
     clearInterval(interval);
+    setTimerInterval(null);
     setBoardTime(0);
     setClick(0);
     explode(false);
@@ -139,25 +144,29 @@ function GameBoard() {
     }
   }
 
+  /**
+   * @description Checks game end logic
+   * - Checks if all tiles are revealed or flagged
+   * - Properly handles auto-flagging when applicable
+   */
   function checkGameEnd() {
-    console.log('THE BOARD: ', board, flags);
-    let playerHasWon = false;
-
-
-    // Check if correct numbers of flags are marked
-    if(flags === 0) {
-      let playerHasWon = true;
-    }
-
-    // Check if all tiles are revealed or flagged
-    const gameIsComplete = board.every((row) => row.every(col => col.isShown || col.isFlag));
-    console.log('IS GAME COMPLETE: ', gameIsComplete, flags);
+    const gameIsComplete = board.every((row) => row.every(col => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
     if(gameIsComplete) {
-      // FIXME: Should still correctly end game if all tiles EXCEPT bombs and flags are clicked -- new ticket
-      // TODO: Properly handle auto-flagging when applicable
+      if(flags !== 0) {
+        const boardCopy = JSON.parse(JSON.stringify(board));
+        boardCopy.forEach((row) => {
+          row.forEach((col) => {
+            if(col.isBomb && !col.isFlag) {
+              col.isFlag = true;
+            }
+          });
+        });
+        setFlag(0);
+      }
+      setBoard(boardCopy);
       setGameStatus(true);
-      setTimerInterval(null);
       clearInterval(interval);
+      setTimerInterval(null);
     }
   }
 
@@ -209,8 +218,8 @@ function GameBoard() {
       }
 
       // Stop timer and clear interval
-      setTimerInterval(null);
       clearInterval(interval);
+      setTimerInterval(null);
     } else if(adjacentBombs === 0) {
       boardCopy[x][y].isShown = true;
 
@@ -278,11 +287,7 @@ function GameBoard() {
             Back
           </button>
         </Link>
-        {/** FIXME: Get these colors to work below */}
-        <h2 className="text-slate-600">Something fun!</h2>
-        <h2 className="text-blue-600">Something blue!</h2>
-        <h2 className="text-orange-600">Something orange!</h2>
-        <h1 className={classNames({'mb-3': true}, {[headerColor]: true})}>Diffiulty: {difficulty}</h1>
+        <h1 className="my-3 text-xl" className={classNames({'my-3 text-2xl': true}, gameHasWon ? 'text-white' : 'text-transparent')}>Congrats! You won!</h1>
         <div className="flex flex-col justify-center items-center border border-gray">
           <div className="flex justify-between items-center w-full">
             <div className="border border-gray p-2">
