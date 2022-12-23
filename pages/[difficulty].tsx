@@ -150,9 +150,12 @@ function GameBoard() {
    * - Properly handles auto-flagging when applicable
    */
   function checkGameEnd() {
-    const gameIsComplete = board.every((row: any) => row.every(col: any => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
+    const gameIsComplete = board.every((row: any) => row.every(col => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
     if(gameIsComplete) {
-      if(flags !== 0) {
+      if(flags < 0) {
+        // Negative flag count indicates improper flagging
+        return;
+      } else if(flags !== 0) {
         const boardCopy = JSON.parse(JSON.stringify(board));
         boardCopy.forEach((row: any) => {
           row.forEach((col: any) => {
@@ -162,8 +165,8 @@ function GameBoard() {
           });
         });
         setFlag(0);
+        setBoard(boardCopy);
       }
-      setBoard(boardCopy);
       setGameStatus(true);
       clearInterval(interval);
       setTimerInterval(null);
@@ -203,7 +206,7 @@ function GameBoard() {
       boardCopy[x][y].isFlag = !isFlag;
       setFlag(flags + (isFlag ? 1 : -1));
     } else if(isBomb) {
-      // explode(true); // TODO: Uncomment this out when done testing
+      explode(true);
       boardCopy[x][y].isShown = true;
       boardCopy[x][y].isGameEnd = true;
 
