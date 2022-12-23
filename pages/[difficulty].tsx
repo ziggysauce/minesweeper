@@ -290,7 +290,7 @@ function GameBoard() {
             Back
           </button>
         </Link>
-        <h1 className="my-3 text-xl" className={classNames({'my-3 text-2xl': true}, gameHasWon ? 'text-white' : 'text-transparent')}>Congrats! You won!</h1>
+        <h1 className={classNames({'my-3 text-2xl': true}, gameHasWon ? 'text-white' : 'text-transparent')}>Congrats! You won!</h1>
         <div className="flex flex-col justify-center items-center border border-gray">
           <div className="flex justify-between items-center w-full">
             <div className="border border-gray p-2">
