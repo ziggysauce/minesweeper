@@ -4,8 +4,13 @@ import classNames from 'classnames'; // TODO: Remove if unused
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faFaceSmile, faFaceFrown, faFaceLaughBeam, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
+/**
+ * @description Generates the board based on difficulty selected
+ * @param {string} difficulty - The difficulty selected
+ * @returns {object} - The board and the number of bombs
+ */
 const generateBoard = (difficulty: string | string[] | undefined) => {
   const board = [];
   let rows = 0;
@@ -43,6 +48,7 @@ const generateBoard = (difficulty: string | string[] | undefined) => {
         isBomb: false,
         isFlag: false,
         isShown: false,
+        isGameEnd: false,
         adjacentBombs: 0,
       };
       rowBlock.push(tile);
@@ -84,27 +90,31 @@ const generateBoard = (difficulty: string | string[] | undefined) => {
   return { board, bombs };
 }
 
-const GameBoard = () => {
+function GameBoard() {
   const router = useRouter();
   const { difficulty } = router.query;
 
   const [board, setBoard] = useState([] as any);
   const [gameHasEnded, explode] = useState(false);
+  const [gameHasWon, setGameStatus] = useState(false);
   const [flags, setFlag] = useState(0);
   const [timer, setBoardTime] = useState(0);
   const [interval, setTimerInterval] = useState(null as any);
+  const [clicks, setClick] = useState(0);
 
   useEffect(() => {
     if(!router.isReady) {
       return;
     }
 
-    if(difficulty) {
-      const formattedBoard = generateBoard(difficulty);
-      setBoard(formattedBoard.board);
-      setFlag(formattedBoard.bombs);
+    if(difficulty && clicks === 0) {
+      restartBoard();
     }
-  }, [router.isReady]);
+
+    if(interval) {
+      checkGameEnd();
+    }
+  }, [clicks, router.isReady]);
 
   // Prevent default behavior with right click
   // TODO: Only prevent right click on board specifically
@@ -123,10 +133,43 @@ const GameBoard = () => {
     const formattedBoard = generateBoard(difficulty);
     setBoard(formattedBoard.board);
     setFlag(formattedBoard.bombs);
+    clearInterval(interval);
     setTimerInterval(null);
     setBoardTime(0);
+    setClick(0);
+    explode(false);
+    setGameStatus(false);
     if(interval) {
       clearInterval(interval);
+    }
+  }
+
+  /**
+   * @description Checks game end logic
+   * - Checks if all tiles are revealed or flagged
+   * - Properly handles auto-flagging when applicable
+   */
+  function checkGameEnd() {
+    const gameIsComplete = board.every((row: any) => row.every((col: any) => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
+    if(gameIsComplete) {
+      if(flags < 0) {
+        // Negative flag count indicates improper flagging
+        return;
+      } else if(flags !== 0) {
+        const boardCopy = JSON.parse(JSON.stringify(board));
+        boardCopy.forEach((row: any) => {
+          row.forEach((col: any) => {
+            if(col.isBomb && !col.isFlag) {
+              col.isFlag = true;
+            }
+          });
+        });
+        setFlag(0);
+        setBoard(boardCopy);
+      }
+      setGameStatus(true);
+      clearInterval(interval);
+      setTimerInterval(null);
     }
   }
 
@@ -136,6 +179,10 @@ const GameBoard = () => {
    * @param {Number} y - The y coordinate of the tile
    */
   const checkTile = (x: number, y: number, e: React.MouseEvent<HTMLButtonElement> | undefined & { button: number }) => {
+    if(gameHasEnded) {
+      return;
+    }
+
     const rightClick = e?.button === 2;
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown, adjacentBombs } = board[x][y];
@@ -161,8 +208,21 @@ const GameBoard = () => {
     } else if(isBomb) {
       explode(true);
       boardCopy[x][y].isShown = true;
-      setTimerInterval(null);
+      boardCopy[x][y].isGameEnd = true;
+
+      // Reveal all other bombs
+      for(let row = 0; row < boardCopy.length; row += 1) {
+        for(let col = 0; col < boardCopy[row].length; col += 1) {
+          const tile = boardCopy[row][col];
+          if(tile.isBomb) {
+            boardCopy[row][col].isShown = true;
+          }
+        }
+      }
+
+      // Stop timer and clear interval
       clearInterval(interval);
+      setTimerInterval(null);
     } else if(adjacentBombs === 0) {
       boardCopy[x][y].isShown = true;
 
@@ -212,6 +272,7 @@ const GameBoard = () => {
       boardCopy[x][y].isShown = true;
     }
     setBoard(boardCopy);
+    setClick(clicks + 1);
   }
 
   let headerColor = 'text-green-600';
@@ -225,22 +286,18 @@ const GameBoard = () => {
       <main className={styles.main}>
         <Link href="/">
           <button className="bg-zinc-700 hover:bg-zinc-800 p-2 m-2 rounded absolute top-0 left-0">
-            <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: 15 }} className="mr-2" />
+            <FontAwesomeIcon icon={ faArrowLeft } style={{ fontSize: 15 }} className="mr-2" />
             Back
           </button>
         </Link>
-        {/** FIXME: Get these colors to work below */}
-        <h2 className="text-slate-600">Something fun!</h2>
-        <h2 className="text-blue-600">Something blue!</h2>
-        <h2 className="text-orange-600">Something orange!</h2>
-        <h1 className={classNames({'mb-3': true}, {[headerColor]: true})}>Diffiulty: {difficulty}</h1>
+        <h1 className={classNames({'my-3 text-2xl': true}, gameHasWon ? 'text-white' : 'text-transparent')}>Congrats! You won!</h1>
         <div className="flex flex-col justify-center items-center border border-gray">
           <div className="flex justify-between items-center w-full">
             <div className="border border-gray p-2">
               {flags}
             </div>
-            <button onClick={() => restartBoard()} className="border border-gray p-2">
-              <FontAwesomeIcon icon={ faFaceSmile } style={{ fontSize: 25 }} />
+            <button onClick={() => restartBoard()} className="border border-gray p-2 text-yellow-300">
+              <FontAwesomeIcon icon={ gameHasEnded ? faFaceFrown : (gameHasWon ? faFaceLaughBeam : faFaceSmile) } style={{ fontSize: 25 }} />
             </button>
             <div className="border border-gray p-2">{timer}</div>
           </div>
@@ -252,26 +309,54 @@ const GameBoard = () => {
                     isBomb: boolean,
                     isFlag: boolean,
                     isShown: boolean,
+                    isGameEnd: boolean,
                     adjacentBombs: number,
                   };
-                  const { isBomb, isFlag, isShown, adjacentBombs } = col as colObj;
+                  const { isBomb, isFlag, isShown, isGameEnd, adjacentBombs } = col as colObj;
                   const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
                   let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
                   let tileContent: ReactElement | null = <span></span>;
                   let bgColor = 'bg-gray-300';
                   let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
 
-                  if(isFlag) {
+                  if(isShown) {
+                    borderStyles = 'border border-gray-500';
+                    if(isBomb) {
+                      // Determine bomb or flag icon
+                      tileContent = isFlag
+                        ? <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />
+                        : <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
+                      if(isFlag) {
+                        // If bomb and is flag, this is a correctly flagged bomb; do nothing
+                        tileColor = 'orange';
+                        borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
+                      } else {
+                        // If bomb and no flag, show the bomb
+                        tileColor = 'slate';
+                      }
+                      if(isGameEnd) {
+                        // Show the site of explosion
+                        bgColor = 'bg-red-600';
+                        tileColor = 'white';
+                      }
+                    } else if(adjacentBombs) {
+                      // Show the number of adjacent bonmbs
+                      tileContent = <span>{adjacentBombs}</span>;
+                    } else if(isFlag && gameHasEnded) {
+                      // Show incorrectly flagged bomb
+                      tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
+                      tileColor = 'slate';
+                      bgColor = 'bg-red-300';
+                      borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
+                    }
+                  } else if(isFlag) {
                     tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
                     tileColor = 'orange';
-                  } else if(isShown) {
-                    if(isBomb) {
-                      tileContent = <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
+                    if(!isBomb && gameHasEnded) {
+                      // Show incorrectly flagged bomb
                       tileColor = 'slate';
-                    } else if(adjacentBombs) {
-                      tileContent = <span>{adjacentBombs}</span>;
+                      bgColor = 'bg-red-300';
                     }
-                    borderStyles = 'border border-gray-500';
                   }
 
                   return (
