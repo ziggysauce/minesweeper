@@ -100,7 +100,7 @@ function GameBoard() {
   const [flags, setFlag] = useState(0);
   const [timer, setBoardTime] = useState(0);
   const [interval, setTimerInterval] = useState(null as any);
-  const [clicks, setClick] = useState(0); // This is a hack to get useEffect to run only on proper tile clicks
+  const [clicks, setClick] = useState(0);
 
   useEffect(() => {
     if(!router.isReady) {
