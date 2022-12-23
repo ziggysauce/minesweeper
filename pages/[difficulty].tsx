@@ -313,8 +313,18 @@ function GameBoard() {
                     adjacentBombs: number,
                   };
                   const { isBomb, isFlag, isShown, isGameEnd, adjacentBombs } = col as colObj;
-                  const numberColors = ['gray', 'blue', 'green', 'red', 'purple', 'amber', 'teal', 'rose', 'black'];
-                  let tileColor = isShown ? numberColors[adjacentBombs] : 'gray';
+                  const numberColors = [
+                    'text-gray-600',
+                    'text-blue-600',
+                    'text-green-600',
+                    'text-red-600',
+                    'text-purple-600',
+                    'text-amber-600',
+                    'text-teal-600',
+                    'text-rose-600',
+                    'text-black-600',
+                  ];
+                  let tileColor = isShown ? numberColors[adjacentBombs] : 'text-gray-600';
                   let tileContent: ReactElement | null = <span></span>;
                   let bgColor = 'bg-gray-300';
                   let borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
@@ -328,16 +338,16 @@ function GameBoard() {
                         : <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
                       if(isFlag) {
                         // If bomb and is flag, this is a correctly flagged bomb; do nothing
-                        tileColor = 'orange';
+                        tileColor = 'text-orange-600';
                         borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
                       } else {
                         // If bomb and no flag, show the bomb
-                        tileColor = 'slate';
+                        tileColor = 'text-slate-600';
                       }
                       if(isGameEnd) {
                         // Show the site of explosion
                         bgColor = 'bg-red-600';
-                        tileColor = 'white';
+                        tileColor = 'text-white-600';
                       }
                     } else if(adjacentBombs) {
                       // Show the number of adjacent bonmbs
@@ -345,23 +355,23 @@ function GameBoard() {
                     } else if(isFlag && gameHasEnded) {
                       // Show incorrectly flagged bomb
                       tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
-                      tileColor = 'slate';
+                      tileColor = 'text-slate-600';
                       bgColor = 'bg-red-300';
                       borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
                     }
                   } else if(isFlag) {
                     tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
-                    tileColor = 'orange';
+                    tileColor = 'text-orange-600';
                     if(!isBomb && gameHasEnded) {
                       // Show incorrectly flagged bomb
-                      tileColor = 'slate';
+                      tileColor = 'text-slate-600';
                       bgColor = 'bg-red-300';
                     }
                   }
 
                   return (
                     <button key={`row-${rowIdx}-col-${colIdx}-${isShown}`}
-                      className={`w-8 h-8 font-bold ${borderStyles} text-${tileColor}-600 ${bgColor}`}
+                      className={`w-8 h-8 font-bold ${borderStyles} ${tileColor} ${bgColor}`}
                       onMouseUp={(e) => checkTile(rowIdx, colIdx, e)}>
                       {tileContent}
                     </button>
