@@ -150,12 +150,12 @@ function GameBoard() {
    * - Properly handles auto-flagging when applicable
    */
   function checkGameEnd() {
-    const gameIsComplete = board.every((row) => row.every(col => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
+    const gameIsComplete = board.every((row: any) => row.every(col: any => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
     if(gameIsComplete) {
       if(flags !== 0) {
         const boardCopy = JSON.parse(JSON.stringify(board));
-        boardCopy.forEach((row) => {
-          row.forEach((col) => {
+        boardCopy.forEach((row: any) => {
+          row.forEach((col: any) => {
             if(col.isBomb && !col.isFlag) {
               col.isFlag = true;
             }
