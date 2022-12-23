@@ -150,7 +150,7 @@ function GameBoard() {
    * - Properly handles auto-flagging when applicable
    */
   function checkGameEnd() {
-    const gameIsComplete = board.every((row: any) => row.every(col => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
+    const gameIsComplete = board.every((row: any) => row.every((col: any) => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
     if(gameIsComplete) {
       if(flags < 0) {
         // Negative flag count indicates improper flagging
