@@ -297,9 +297,9 @@ function GameBoard() {
         <div className="flex flex-col justify-center items-center border-8 border-gray-300 bg-gray-300">
           <div className="flex justify-between items-center w-full border-8 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 mb-2">
             <div className="mx-2 grow p-1">
-              <div className="border-2 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 bg-black p-2 text-red-500">
-                <span className="p-1">
-                  {flags}
+              <div className="border-2 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 bg-black py-5 px-1 text-red-500 relative">
+                <span className={classNames('p-1', styles['digital-font'])}>
+                  {('000' + flags).substr(-3)}
                 </span>
               </div>
             </div>
@@ -311,8 +311,10 @@ function GameBoard() {
               </button>
             </div>
             <div className="mx-2 grow p-1">
-              <div className="border-2 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 bg-black p-2 text-red-500">
-                {timer}
+              <div className="border-2 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 bg-black py-5 px-1 text-red-500 relative">
+                <span className={classNames('p-1', styles['digital-font'])}>
+                  {('000' + timer).substr(-3)}
+                </span>
               </div>
             </div>
           </div>

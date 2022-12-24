@@ -28,3 +28,13 @@ a {
     background: black;
   }
 }
+
+@font-face {
+  font-family: 'Digital7';
+  src: url('../assets/digital-7/digital-7.ttf');
+  src: url('../assets/digital-7/digital-7-italic.ttf');
+  src: url('../assets/digital-7/digital-7-mono-italic.ttf');
+  src: url('../assets/digital-7/digital-7-mono.ttf');
+  font-weight: 400;
+  font-style: normal;
+  }
