@@ -133,14 +133,13 @@ function GameBoard() {
     const formattedBoard = generateBoard(difficulty);
     setBoard(formattedBoard.board);
     setFlag(formattedBoard.bombs);
-    clearInterval(interval);
-    setTimerInterval(null);
     setBoardTime(0);
     setClick(0);
     explode(false);
     setGameStatus(false);
     if(interval) {
       clearInterval(interval);
+      setTimerInterval(null);
     }
   }
 
@@ -150,7 +149,11 @@ function GameBoard() {
    * - Properly handles auto-flagging when applicable
    */
   function checkGameEnd() {
-    const gameIsComplete = board.every((row: any) => row.every((col: any) => col.isShown || col.isFlag || (!col.isShown && col.isBomb)));
+    const gameIsComplete = board.every((row: any) => {
+      return row.every((col: any) => {
+        return col.isShown || (col.isFlag && col.isBomb) || (!col.isShown && col.isBomb);
+      });
+    });
     if(gameIsComplete) {
       if(flags < 0) {
         // Negative flag count indicates improper flagging
@@ -291,17 +294,31 @@ function GameBoard() {
           </button>
         </Link>
         <h1 className={classNames({'my-3 text-2xl': true}, gameHasWon ? 'text-white' : 'text-transparent')}>Congrats! You won!</h1>
-        <div className="flex flex-col justify-center items-center border border-gray">
-          <div className="flex justify-between items-center w-full">
-            <div className="border border-gray p-2">
-              {flags}
+        <div className="flex flex-col justify-center items-center border-8 border-gray-300 bg-gray-300">
+          <div className="flex justify-between items-center w-full border-8 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 mb-2">
+            <div className="mx-2 grow p-1">
+              <div className="border-2 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 bg-black py-5 px-1 text-red-500 relative">
+                <span className={classNames('p-1', styles['digital-font'])}>
+                  {('000' + flags).substr(-3)}
+                </span>
+              </div>
             </div>
-            <button onClick={() => restartBoard()} className="border border-gray p-2 text-yellow-300">
-              <FontAwesomeIcon icon={ gameHasEnded ? faFaceFrown : (gameHasWon ? faFaceLaughBeam : faFaceSmile) } style={{ fontSize: 25 }} />
-            </button>
-            <div className="border border-gray p-2">{timer}</div>
+            <div className="border-2 border-gray-500 my-2 mx-4">
+              <button onClick={() => restartBoard()} className="border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500 p-0.5">
+                <span className="text-yellow-300 bg-black border-2 border-black rounded-full flex justify-center items-center">
+                  <FontAwesomeIcon icon={ gameHasEnded ? faFaceFrown : (gameHasWon ? faFaceLaughBeam : faFaceSmile) } style={{ fontSize: 25 }} />
+                </span>
+              </button>
+            </div>
+            <div className="mx-2 grow p-1">
+              <div className="border-2 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 bg-black py-5 px-1 text-red-500 relative">
+                <span className={classNames('p-1', styles['digital-font'])}>
+                  {('000' + timer).substr(-3)}
+                </span>
+              </div>
+            </div>
           </div>
-          <div>
+          <div className="border-8 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100">
             {board.map((row: object[], rowIdx: number) => (
               <div key={`row-${rowIdx}`} className="flex">
                 {row.map((col: object, colIdx: number) => {
