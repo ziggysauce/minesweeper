@@ -190,16 +190,6 @@ function GameBoard() {
     const boardCopy = JSON.parse(JSON.stringify(board));
     const { isBomb, isFlag, isShown, adjacentBombs } = board[x][y];
 
-    // Start timer on first click
-    if(!interval) {
-      const intervalId: number | string| null | any = setInterval(() => {
-        setBoardTime((oldTime: number) => {
-          return oldTime + 1;
-        });
-      }, 1000);
-      setTimerInterval(intervalId);
-    }
-
     // If already visible, do nothing
     if(isShown || (isFlag && !isShown && !rightClick)) {
       return;
@@ -226,6 +216,8 @@ function GameBoard() {
       // Stop timer and clear interval
       clearInterval(interval);
       setTimerInterval(null);
+      setBoard(boardCopy);
+      return;
     } else if(adjacentBombs === 0) {
       boardCopy[x][y].isShown = true;
 
@@ -276,6 +268,16 @@ function GameBoard() {
     }
     setBoard(boardCopy);
     setClick(clicks + 1);
+
+    // Start timer on first click
+    if(!interval) {
+      const intervalId: number | string| null | any = setInterval(() => {
+        setBoardTime((oldTime: number) => {
+          return oldTime + 1;
+        });
+      }, 1000);
+      setTimerInterval(intervalId);
+    }
   }
 
   let headerColor = 'text-green-600';
