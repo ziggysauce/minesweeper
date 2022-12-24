@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, ReactElement, MouseEvent } from 'react';
-import classNames from 'classnames'; // TODO: Remove if unused
+import classNames from 'classnames';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -101,7 +101,7 @@ function GameBoard() {
   const [timer, setBoardTime] = useState(0);
   const [interval, setTimerInterval] = useState(null as any);
   const [clicks, setClick] = useState(0);
-  const [pointerDown, setPointerDown] = useState(null as any);
+  const [touchDown, setTouchDown] = useState(null as any);
 
   useEffect(() => {
     if(!router.isReady) {
@@ -189,9 +189,9 @@ function GameBoard() {
 
     // This is a simple solution. Handles long hold flagging on mobile.
     const isMobileDevice = /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-    const pointerUp = Date.now();
-    const isLongHold = pointerUp - pointerDown >= 1000;
-    setPointerDown(null);
+    const touchUp = Date.now();
+    const isLongHold = touchUp - touchDown >= 1000;
+    setTouchDown(null);
 
     const rightClick = e?.button === 2 || (isMobileDevice && isLongHold);
     const boardCopy = JSON.parse(JSON.stringify(board));
@@ -398,8 +398,8 @@ function GameBoard() {
                   return (
                     <button key={`row-${rowIdx}-col-${colIdx}-${isShown}`}
                       className={`w-8 h-8 font-bold ${borderStyles} ${tileColor} ${bgColor}`}
-                      onPointerDown={() => setPointerDown(Date.now())}
-                      onPointerUp={(e) => checkTile(rowIdx, colIdx, e)}>
+                      onTouchDown={() => setTouchDown(Date.now())}
+                      onTouchUp={(e) => checkTile(rowIdx, colIdx, e)}>
                       {tileContent}
                     </button>
                   )}
