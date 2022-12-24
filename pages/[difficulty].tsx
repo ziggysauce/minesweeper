@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useState, useEffect, ReactElement, MouseEvent } from 'react';
+import React, { useState, useEffect, ReactElement, TouchEvent } from 'react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
@@ -182,7 +182,7 @@ function GameBoard() {
    * @param {Number} x - The x coordinate of the tile
    * @param {Number} y - The y coordinate of the tile
    */
-  const checkTile = (x: number, y: number, e: React.MouseEvent<HTMLButtonElement> | undefined & { button: number }) => {
+  const checkTile = (x: number, y: number, e: React.TouchEvent<HTMLButtonElement> | undefined & { button: number }) => {
     if(gameHasEnded) {
       return;
     }
