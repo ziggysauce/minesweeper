@@ -9,17 +9,18 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Minesweeper</title>
+        <title>Chem Cleanup</title>
         <meta name="description" content="A minesweeper game" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <div className="flex justify-center items-center flex-wrap">
-          <h1 className="text-5xl font-bold text-center">
-            Welcome to Minesweeper
-          </h1>
-          <MyModal />
+        <div className="flex flex-col justify-center items-center">
+          <div className="flex justify-center items-center flex-wrap">
+            <h1 className="text-5xl font-bold text-center">Welcome to Chem Cleanup</h1>
+            <MyModal />
+          </div>
+          <h5>(It's the same as Minesweeper)</h5>
         </div>
         <div className="mt-4">
           <h2 className="text-3xl font-bold">Start a new game</h2>
@@ -43,7 +44,11 @@ const Home: NextPage = () => {
         </div>
       </main>
 
-      <footer className={styles.footer}>A footer will go here!</footer>
+      <footer className={styles.footer}>
+        <span className="text-red-500 pr-1">Merry</span>
+        <span className="text-green-500 pr-1">Christmas</span>
+        <span> Professor Njus!</span>
+      </footer>
     </div>
   );
 };
