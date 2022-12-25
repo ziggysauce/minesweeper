@@ -2,7 +2,7 @@ import { Menu, Transition } from '@headlessui/react';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import MyToggle from './toggle';
 
-export default function MyDropdown(props: object) {
+export default function MyDropdown(props: any) {
   return (
     <div className="fixed top-0 right-0 m-2 text-right">
       <Menu as="div" className="relative inline-block text-left">

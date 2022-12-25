@@ -9,9 +9,9 @@ import MyToggle from '../components/toggle';
 import MyDropdown from '../components/dropdown';
 
 const Home: NextPage = () => {
-  let localGameMode = ''; // Default to chem cleanup
+  let localGameMode = 'chem'; // Default to chem cleanup
   if (typeof window !== 'undefined') {
-    localGameMode = JSON.parse(localStorage.getItem('game-mode'));
+    localGameMode = JSON.parse(localStorage.getItem('game-mode')) || localGameMode;
   }
   const [gameMode, setGameMode] = useState(localGameMode);
 

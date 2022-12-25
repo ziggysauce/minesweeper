@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Switch } from '@headlessui/react';
 
-type colObj = {
-  gameMode: string | null,
+type propsObject = {
+  gameMode: string | null | any,
   setGameMode: Function,
 };
 
-const MyToggle = (props as propsObject) => {
+export default function MyToggle(props: any) {
   // FIXME: Generalize this to work with any toggle
   const [enabled, setEnabled] = useState(props.gameMode === 'chem');
 
@@ -26,7 +26,5 @@ const MyToggle = (props as propsObject) => {
         } inline-block h-4 w-4 transform rounded-full bg-white transition`}
       />
     </Switch>
-  )
+  );
 }
-
-export default MyToggle;

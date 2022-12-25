@@ -135,7 +135,7 @@ function GameBoard() {
     });
     const localGameMode = JSON.parse(localStorage.getItem('game-mode'));
     if(localGameMode !== gameMode) {
-      setGameMode(localGameMode === 'chem' ? 'chem' : 'minesweeper');
+      setGameMode(localGameMode || 'minesweeper');
     }
   }
 
