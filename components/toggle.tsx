@@ -6,7 +6,7 @@ type colObj = {
   setGameMode: Function,
 };
 
-const MyToggle: React.FC<Props> = (props as propsObject) => {
+const MyToggle = (props as propsObject) => {
   // FIXME: Generalize this to work with any toggle
   const [enabled, setEnabled] = useState(props.gameMode === 'chem');
 
