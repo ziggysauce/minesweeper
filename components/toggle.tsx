@@ -3,7 +3,7 @@ import { Switch } from '@headlessui/react';
 
 type colObj = {
   gameMode: string | null,
-  setGameMode: function,
+  setGameMode: Function,
 };
 
 const MyToggle: React.FC<Props> = (props as propsObject) => {
