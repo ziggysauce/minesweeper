@@ -64,6 +64,7 @@ export default function MyModal() {
                       contain mines. Cells suspected of being mines can be
                       marked with a flag using the right mouse button.
                     </p>
+                    <p className="text-sm text-gray-500 mt-2"><span className="text-red-500 font-semibold">NOTE: </span>The flagging feature is not yet supported on mobile devices.</p>
                   </div>
 
                   <div className="mt-4">
