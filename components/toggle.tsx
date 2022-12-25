@@ -28,3 +28,5 @@ const MyToggle: React.FC<Props> = (props as propsObject) => {
     </Switch>
   )
 }
+
+export default MyToggle;
