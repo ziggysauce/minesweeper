@@ -133,9 +133,10 @@ function GameBoard() {
     window.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
-    const localGameMode = JSON.parse(localStorage.getItem('game-mode')) || 'chem';
+    const localValue = localStorage.getItem('game-mode');
+    const localGameMode = localValue ? JSON.parse(localValue) : 'chem';
     if(localGameMode !== gameMode) {
-      setGameMode(localGameMode || 'chem');
+      setGameMode(localGameMode);
     }
   }
 

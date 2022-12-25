@@ -11,13 +11,13 @@ import MyDropdown from '../components/dropdown';
 const Home: NextPage = () => {
   let localGameMode = 'chem'; // Default to chem cleanup
   if (typeof window !== 'undefined') {
-    localGameMode = JSON.parse(localStorage.getItem('game-mode')) || localGameMode;
+    const localValue = localStorage.getItem('game-mode');
+    localGameMode = localValue ? JSON.parse(localValue) : 'chem';
   }
-  const [gameMode, setGameMode] = useState(localGameMode);
+  const [gameMode, setGameMode] = useState(localGameMode as any);
 
   useEffect(() => {
     localStorage.setItem('game-mode', JSON.stringify(gameMode));
-    const stored = JSON.parse(localStorage.getItem('game-mode'));
   }, [gameMode]);
 
 
@@ -35,7 +35,7 @@ const Home: NextPage = () => {
         </div>
         <div className="flex flex-col justify-center items-center">
           <div className="flex justify-center items-center flex-wrap">
-            <h1 className="text-5xl font-bold text-center">Welcome to {gameMode === 'chem' ? 'Chem Cleanup' : 'Minesweeper'}</h1>
+            <h1 className="text-5xl font-bold text-center">Welcome to {gameMode == 'chem' ? 'Chem Cleanup' : 'Minesweeper'}</h1>
             <MyModal />
           </div>
         </div>
