@@ -4,7 +4,17 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFaceSmile, faFaceFrown, faFaceLaughBeam, faFlag, faBomb, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFaceSmile,
+  faFaceFrown,
+  faFaceDizzy,
+  faFaceLaughBeam,
+  faFlag,
+  faBomb,
+  faArrowLeft,
+  faFire,
+  faVialCircleCheck,
+} from '@fortawesome/free-solid-svg-icons';
 
 /**
  * @description Generates the board based on difficulty selected
@@ -101,6 +111,7 @@ function GameBoard() {
   const [timer, setBoardTime] = useState(0);
   const [interval, setTimerInterval] = useState(null as any);
   const [clicks, setClick] = useState(0);
+  const [gameMode, setGameMode] = useState('chem');
 
   useEffect(() => {
     if(!router.isReady) {
@@ -122,7 +133,15 @@ function GameBoard() {
     window.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
+    const localGameMode = JSON.parse(localStorage.getItem('game-mode'));
+    if(localGameMode !== gameMode) {
+      setGameMode(localGameMode === 'chem' ? 'chem' : 'minesweeper');
+    }
   }
+
+  const [bombIcon, flagIcon, flagColor, loseIcon] = gameMode === 'chem'
+    ? [faFire, faVialCircleCheck, 'text-emerald-600', faFaceDizzy]
+    : [faBomb, faFlag, 'text-orange-600', faFaceFrown];
 
   /**
    * @description Restarts the game:
@@ -291,7 +310,7 @@ function GameBoard() {
       <main className={styles.main}>
         <Link href="/">
           <button className="bg-zinc-700 hover:bg-zinc-800 p-2 m-2 rounded absolute top-0 left-0">
-            <FontAwesomeIcon icon={ faArrowLeft } style={{ fontSize: 15 }} className="mr-2" />
+            <FontAwesomeIcon icon={ faArrowLeft } style={{ fontSize: 20 }} className="mr-2" />
             Back
           </button>
         </Link>
@@ -308,7 +327,7 @@ function GameBoard() {
             <div className="border-2 border-gray-500 my-2 mx-4">
               <button onClick={() => restartBoard()} className="border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500 p-0.5">
                 <span className="text-yellow-300 bg-black border-2 border-black rounded-full flex justify-center items-center">
-                  <FontAwesomeIcon icon={ gameHasEnded ? faFaceFrown : (gameHasWon ? faFaceLaughBeam : faFaceSmile) } style={{ fontSize: 25 }} />
+                  <FontAwesomeIcon icon={ gameHasEnded ? loseIcon : (gameHasWon ? faFaceLaughBeam : faFaceSmile) } style={{ fontSize: 25 }} />
                 </span>
               </button>
             </div>
@@ -353,11 +372,11 @@ function GameBoard() {
                     if(isBomb) {
                       // Determine bomb or flag icon
                       tileContent = isFlag
-                        ? <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />
-                        : <FontAwesomeIcon icon={faBomb} style={{ fontSize: 15 }} />;
+                        ? <FontAwesomeIcon icon={ flagIcon } style={{ fontSize: 20 }} />
+                        : <FontAwesomeIcon icon={ bombIcon } style={{ fontSize: 20 }} />;
                       if(isFlag) {
                         // If bomb and is flag, this is a correctly flagged bomb; do nothing
-                        tileColor = 'text-orange-600';
+                        tileColor = flagColor;
                         borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
                       } else {
                         // If bomb and no flag, show the bomb
@@ -373,14 +392,14 @@ function GameBoard() {
                       tileContent = <span>{adjacentBombs}</span>;
                     } else if(isFlag && gameHasEnded) {
                       // Show incorrectly flagged bomb
-                      tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
+                      tileContent = <FontAwesomeIcon icon={ flagIcon } style={{ fontSize: 20 }} />;
                       tileColor = 'text-slate-600';
                       bgColor = 'bg-red-300';
                       borderStyles = 'border-4 border-t-gray-100 border-l-gray-100 border-b-gray-500 border-r-gray-500';
                     }
                   } else if(isFlag) {
-                    tileContent = <FontAwesomeIcon icon={faFlag} style={{ fontSize: 15 }} />;
-                    tileColor = 'text-orange-600';
+                    tileContent = <FontAwesomeIcon icon={ flagIcon } style={{ fontSize: 20 }} />;
+                    tileColor = flagColor;
                     if(!isBomb && gameHasEnded) {
                       // Show incorrectly flagged bomb
                       tileColor = 'text-slate-600';
@@ -390,7 +409,7 @@ function GameBoard() {
 
                   return (
                     <button key={`row-${rowIdx}-col-${colIdx}-${isShown}`}
-                      className={`w-8 h-8 font-bold ${borderStyles} ${tileColor} ${bgColor}`}
+                      className={`w-10 h-10 text-2xl font-bold ${borderStyles} ${tileColor} ${bgColor}`}
                       onMouseUp={(e) => checkTile(rowIdx, colIdx, e)}>
                       {tileContent}
                     </button>
