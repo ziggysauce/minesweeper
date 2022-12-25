@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Switch } from '@headlessui/react';
 
-export default function MyToggle(props) {
+export default function MyToggle(props: object) {
   // FIXME: Generalize this to work with any toggle
   const [enabled, setEnabled] = useState(props.gameMode === 'chem');
 

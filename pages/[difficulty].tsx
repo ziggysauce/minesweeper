@@ -139,6 +139,7 @@ function GameBoard() {
     }
   }
 
+  // Store constants based on theme
   const [bombIcon, flagIcon, flagColor, loseIcon] = gameMode === 'chem'
     ? [faFire, faVialCircleCheck, 'text-emerald-600', faFaceDizzy]
     : [faBomb, faFlag, 'text-orange-600', faFaceFrown];
