@@ -133,9 +133,9 @@ function GameBoard() {
     window.addEventListener('contextmenu', (e) => {
       e.preventDefault();
     });
-    const localGameMode = JSON.parse(localStorage.getItem('game-mode'));
+    const localGameMode = JSON.parse(localStorage.getItem('game-mode')) || 'chem';
     if(localGameMode !== gameMode) {
-      setGameMode(localGameMode || 'minesweeper');
+      setGameMode(localGameMode || 'chem');
     }
   }
 
