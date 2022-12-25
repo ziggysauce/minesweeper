@@ -9,17 +9,18 @@ import MyToggle from '../components/toggle';
 import MyDropdown from '../components/dropdown';
 
 const Home: NextPage = () => {
-  let localGameMode = 'chem'; // Default to chem cleanup
+  // FIXME: Hydration error with server side rendering not matching client side rendering
+  let localGameMode = 'minesweeper'; // Default to minesweeper cleanup
   if (typeof window !== 'undefined') {
     const localValue = localStorage.getItem('game-mode');
     localGameMode = localValue ? JSON.parse(localValue) : 'chem';
   }
+
   const [gameMode, setGameMode] = useState(localGameMode as any);
 
   useEffect(() => {
     localStorage.setItem('game-mode', JSON.stringify(gameMode));
   }, [gameMode]);
-
 
   return (
     <div className={styles.container}>
@@ -35,7 +36,7 @@ const Home: NextPage = () => {
         </div>
         <div className="flex flex-col justify-center items-center">
           <div className="flex justify-center items-center flex-wrap">
-            <h1 className="text-5xl font-bold text-center">Welcome to {gameMode == 'chem' ? 'Chem Cleanup' : 'Minesweeper'}</h1>
+            <h1 className="text-5xl font-bold text-center">Welcome to {gameMode === 'chem' ? 'Chem Cleanup' : 'Minesweeper'}</h1>
             <MyModal />
           </div>
         </div>
