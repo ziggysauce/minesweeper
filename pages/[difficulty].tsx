@@ -203,7 +203,7 @@ function GameBoard() {
       // Show best time; save new best time if applicable
       const bestTime = localStorage.getItem(difficulty || '0' as any);
       if(!bestTime || (bestTime && (timer < Number(bestTime)))) {
-        localStorage.setItem(difficulty?.toString(), timer.toString());
+        localStorage.setItem(difficulty?.toString() || '0' as any, timer.toString());
         setBestTime(timer);
         setNewBest(true);
       }
