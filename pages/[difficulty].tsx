@@ -311,12 +311,12 @@ function GameBoard() {
     return (
       <main className={styles.main}>
         <Link href="/">
-          <button className="bg-zinc-700 hover:bg-zinc-800 p-2 m-2 rounded absolute top-0 left-0">
+          <button className="bg-blue-500 hover:bg-blue-600 p-2 m-2 rounded absolute top-0 left-0">
             <FontAwesomeIcon icon={ faArrowLeft } style={{ fontSize: 20 }} className="mr-2" />
             Back
           </button>
         </Link>
-        <h1 className={classNames({'my-3 text-2xl': true}, gameHasWon ? 'text-white' : 'text-transparent')}>Congrats! You won!</h1>
+        <h1 className={classNames({'my-3 text-2xl': true}, gameHasWon ? 'text-blue-500' : 'text-transparent')}>Congrats! You won!</h1>
         <div className="flex flex-col justify-center items-center border-8 border-gray-300 bg-gray-300">
           <div className="flex justify-between items-center w-full border-8 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 mb-2">
             <div className="mx-2 grow p-1">

@@ -18,7 +18,7 @@ export default function MyToggle(props: any) {
     <Switch
       checked={enabled}
       onChange={setEnabled}
-      className={`${enabled ? 'bg-blue-600' : 'bg-gray-400'} relative inline-flex h-6 w-11 items-center rounded-full`}>
+      className={`${enabled ? 'bg-blue-500' : 'bg-gray-400'} relative inline-flex h-6 w-11 items-center rounded-full`}>
       <span className="sr-only">Toggle</span>
       <span
         className={`${
