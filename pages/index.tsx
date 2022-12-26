@@ -10,15 +10,19 @@ import MyDropdown from '../components/dropdown';
 
 const Home: NextPage = () => {
   // FIXME: Hydration error with server side rendering not matching client side rendering
-  let localGameMode = 'chem'; // Default to chem cleanup
+  let localGameMode = null; // Default to chem cleanup
   if (typeof window !== 'undefined') {
     const localValue = localStorage.getItem('game-mode');
     localGameMode = localValue ? JSON.parse(localValue) : 'chem';
   }
 
-  const [gameMode, setGameMode] = useState(localGameMode as any);
+  const [gameMode, setGameMode] = useState(localGameMode as string | null | any);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    if(!hydrated) {
+      setHydrated(true);
+    }
     localStorage.setItem('game-mode', JSON.stringify(gameMode));
   }, [gameMode]);
 
@@ -31,12 +35,10 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <div className="">
-          <MyDropdown setGameMode={setGameMode} gameMode={gameMode} />
-        </div>
+        <MyDropdown setGameMode={setGameMode} gameMode={gameMode} />
         <div className="flex flex-col justify-center items-center">
           <div className="flex justify-center items-center flex-wrap">
-            <h1 className="text-5xl font-bold text-center">Welcome to {gameMode === 'chem' ? 'Chem Cleanup' : 'Minesweeper'}</h1>
+            {gameMode && hydrated && <h1 className="text-5xl font-bold text-center">Welcome to {gameMode === 'chem' ? 'Chem Cleanup' : 'Minesweeper'}</h1>}
             <MyModal />
           </div>
         </div>
