@@ -10,7 +10,7 @@ import MyDropdown from '../components/dropdown';
 
 const Home: NextPage = () => {
   // FIXME: Hydration error with server side rendering not matching client side rendering
-  let localGameMode = 'minesweeper'; // Default to minesweeper cleanup
+  let localGameMode = 'chem'; // Default to chem cleanup
   if (typeof window !== 'undefined') {
     const localValue = localStorage.getItem('game-mode');
     localGameMode = localValue ? JSON.parse(localValue) : 'chem';
