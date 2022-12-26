@@ -105,7 +105,7 @@ function GameBoard() {
   const { difficulty } = router.query;
 
   let localBestTime = null;
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && difficulty) {
     const localValue = localStorage.getItem(difficulty);
     localBestTime = localValue ? JSON.parse(localValue) : null;
   }
