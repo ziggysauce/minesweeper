@@ -104,6 +104,12 @@ function GameBoard() {
   const router = useRouter();
   const { difficulty } = router.query;
 
+  let localBestTime = null;
+  if (typeof window !== 'undefined') {
+    const localValue = localStorage.getItem(difficulty);
+    localBestTime = localValue ? JSON.parse(localValue) : null;
+  }
+
   const [board, setBoard] = useState([] as any);
   const [gameHasEnded, explode] = useState(false);
   const [gameHasWon, setGameStatus] = useState(false);
@@ -112,6 +118,8 @@ function GameBoard() {
   const [interval, setTimerInterval] = useState(null as any);
   const [clicks, setClick] = useState(0);
   const [gameMode, setGameMode] = useState('chem');
+  const [bestTime, setBestTime] = useState(localBestTime as any);
+  const [newBest, setNewBest] = useState(false);
 
   useEffect(() => {
     if(!router.isReady) {
@@ -158,6 +166,7 @@ function GameBoard() {
     setClick(0);
     explode(false);
     setGameStatus(false);
+    setNewBest(false);
     if(interval) {
       clearInterval(interval);
       setTimerInterval(null);
@@ -191,6 +200,14 @@ function GameBoard() {
         setFlag(0);
         setBoard(boardCopy);
       }
+      // Show best time; save new best time if applicable
+      const bestTime = localStorage.getItem(difficulty);
+      if(!bestTime || (bestTime && (timer < Number(bestTime)))) {
+        localStorage.setItem(difficulty, timer.toString());
+        setBestTime(timer);
+        setNewBest(true);
+      }
+
       setGameStatus(true);
       clearInterval(interval);
       setTimerInterval(null);
@@ -316,7 +333,8 @@ function GameBoard() {
             Back
           </button>
         </Link>
-        <h1 className={classNames({'my-3 text-2xl': true}, {'text-transparent': !gameHasWon})}>Congrats! You won!</h1>
+        <h1 className={classNames('my-3 text-2xl', {'text-transparent': !gameHasWon})}>Congrats! You won!</h1>
+        {bestTime && <h3 className={classNames({'text-transparent': !gameHasWon}, 'mb-2')}>{newBest ? 'New ' : 'Previous '} Best Time: <span className="text-green-400">{bestTime} seconds</span></h3>}
         <div className="flex flex-col justify-center items-center border-8 border-gray-300 bg-gray-300">
           <div className="flex justify-between items-center w-full border-8 border-t-gray-500 border-l-gray-500 border-b-gray-100 border-r-gray-100 mb-2">
             <div className="mx-2 grow p-1">

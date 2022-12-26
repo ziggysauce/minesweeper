@@ -16,7 +16,7 @@ const Home: NextPage = () => {
     localGameMode = localValue ? JSON.parse(localValue) : 'chem';
   }
 
-  const [gameMode, setGameMode] = useState(localGameMode as string | null | any);
+  const [gameMode, setGameMode] = useState(localGameMode as any);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
