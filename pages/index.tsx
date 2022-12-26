@@ -1,11 +1,31 @@
 import type { NextPage } from 'next';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import MyModal from '../components/modal';
+import MyToggle from '../components/toggle';
+import MyDropdown from '../components/dropdown';
 
 const Home: NextPage = () => {
+  // FIXME: Hydration error with server side rendering not matching client side rendering
+  let localGameMode = null; // Default to chem cleanup
+  if (typeof window !== 'undefined') {
+    const localValue = localStorage.getItem('game-mode');
+    localGameMode = localValue ? JSON.parse(localValue) : 'chem';
+  }
+
+  const [gameMode, setGameMode] = useState(localGameMode as string | null | any);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    if(!hydrated) {
+      setHydrated(true);
+    }
+    localStorage.setItem('game-mode', JSON.stringify(gameMode));
+  }, [gameMode]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -15,12 +35,12 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
+        <MyDropdown setGameMode={setGameMode} gameMode={gameMode} />
         <div className="flex flex-col justify-center items-center">
           <div className="flex justify-center items-center flex-wrap">
-            <h1 className="text-5xl font-bold text-center">Welcome to Chem Cleanup</h1>
+            {gameMode && hydrated && <h1 className="text-5xl font-bold text-center">Welcome to {gameMode === 'chem' ? 'Chem Cleanup' : 'Minesweeper'}</h1>}
             <MyModal />
           </div>
-          <h5>(It's the same as Minesweeper)</h5>
         </div>
         <div className="mt-4">
           <h2 className="text-3xl font-bold">Start a new game</h2>
