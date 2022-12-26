@@ -106,7 +106,7 @@ function GameBoard() {
 
   let localBestTime = null;
   if (typeof window !== 'undefined' && difficulty) {
-    const localValue = localStorage.getItem(difficulty);
+    const localValue = localStorage.getItem(difficulty.toString());
     localBestTime = localValue ? JSON.parse(localValue) : null;
   }
 
@@ -203,7 +203,7 @@ function GameBoard() {
       // Show best time; save new best time if applicable
       const bestTime = localStorage.getItem(difficulty);
       if(!bestTime || (bestTime && (timer < Number(bestTime)))) {
-        localStorage.setItem(difficulty, timer.toString());
+        localStorage.setItem(difficulty?.toString(), timer.toString());
         setBestTime(timer);
         setNewBest(true);
       }
