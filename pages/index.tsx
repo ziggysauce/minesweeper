@@ -64,11 +64,9 @@ const Home: NextPage = () => {
         </div>
       </main>
 
-      <footer className={styles.footer}>
-        <span className="text-red-500 pr-1">Merry</span>
-        <span className="text-green-500 pr-1">Christmas</span>
-        <span> Professor Njus!</span>
-      </footer>
+      {/* TURNING OFF FOOTER FOR NOW */}
+      {/* <footer className={styles.footer}>
+      </footer> */}
     </div>
   );
 };
